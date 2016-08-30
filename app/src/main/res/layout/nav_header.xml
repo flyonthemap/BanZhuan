@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/navi"
+    android:layout_width="match_parent"
+    android:layout_height="192dp"
+    android:background="?attr/colorPrimaryDark"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:weightSum="1">
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:civ_border_width="1dp"
+        app:civ_border_color="#f2f2f2"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/big_iv_portrait"
+        android:src="@drawable/portrait"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"/>
+
+    <RelativeLayout
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginLeft="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/big_iv_portrait"
+        android:layout_toEndOf="@+id/big_iv_portrait">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:text="100元"
+            android:textSize="22sp"
+            android:textColor="#f9faf9"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/tv_income" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="在地图上飞行"
+            android:textSize="12sp"
+            android:id="@+id/tv_nickname"
+            />
+
+
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>

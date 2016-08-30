@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">搬赚</string>
+    <string name="hisRecord">历史任务</string>
+    <string name="hisExchange">历史兑换</string>
+    <string name="settings">设置</string>
+    <string name="about">关于</string>
+    <string name="my_task">我的任务</string>
+    <string name="my_exchange">我要兑换</string>
+    <string name="load_error">加载失败，请重试~</string>
+    <string name="load_more">加载中...</string>
+    <string name="please_enter_the_account">请输入账号</string>
+    <string name="please_enter_the_password">请输入密码</string>
+    <string name="register">注册</string>
+    <string name="forget_password">忘记密码</string>
+    <string name="login">登录</string>
+    <string name="user_name">用户名</string>
+    <string name="phone_num">手机号</string>
+    <string name="auth_code">验证码</string>
+    <string name="get_code">获取</string>
+    <string name="password">密码</string>
+    <string name="change_personal_info">修改信息</string>
+    <string name="save">保存</string>
+    <string name="load_no_more">宝宝的度量可是有限的呢~</string>
+</resources>
