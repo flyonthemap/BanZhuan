@@ -1,4 +1,5 @@
 <resources>
+    <!--这里是界面显示和Toast提示的全部内容-->
     <string name="app_name">搬赚</string>
     <string name="hisRecord">历史任务</string>
     <string name="hisExchange">历史兑换</string>
@@ -10,15 +11,110 @@
     <string name="load_more">加载中...</string>
     <string name="please_enter_the_account">请输入账号</string>
     <string name="please_enter_the_password">请输入密码</string>
-    <string name="register">注册</string>
-    <string name="forget_password">忘记密码</string>
-    <string name="login">登录</string>
+
+
     <string name="user_name">用户名</string>
     <string name="phone_num">手机号</string>
-    <string name="auth_code">验证码</string>
-    <string name="get_code">获取</string>
-    <string name="password">密码</string>
+
     <string name="change_personal_info">修改信息</string>
     <string name="save">保存</string>
     <string name="load_no_more">宝宝的度量可是有限的呢~</string>
+
+
+
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="crong_investment_assistant">搬赚网投标助手</string>
+    <string name="android">Android</string>
+    <string name="phone_registerNotifide">您输入的手机号码已经注册了帐号为%1$s***%2$s的帐户，请用该账户直接登录</string>
+
+    <string name="userformat">%1$s***%2$s</string>
+    <string name="login_pw">登录密码</string>
+    <string name="autoLogin">下次自动登录</string>
+
+
+    <string name="getCaptcha_too_many">今日发送次数超出限制</string>
+    <string name="getCaptcha_frequently">你获取验证码过于频繁，先喝杯茶吧！</string>
+    <string name="username">&#160;&#160;&#160;用户名：</string>
+    <string name="null_account">帐号不能为空</string>
+    <string name="short_account">帐号不能低于3个字</string>
+    <string name="error_account">帐号格式不正确</string>
+    <string name="password">登录密码:</string>
+    <string name="same_password">登录密码与交易密码不能相同</string>
+    <string name="null_password">密码不能为空</string>
+    <string name="short_password">密码长度太短</string>
+    <string name="error_password">密码格式不正确</string>
+    <string name="number_password">登录密码不可为纯数字</string>
+    <string name="short_tran_password">交易密码长度太短</string>
+    <string name="error_tran_password">交易密码格式不正确</string>
+    <string name="number_tran_password">交易密码不可为纯数字</string>
+
+    <string name="registerSuccess">注册成功！</string>
+    <string name="null_phone">手机号码不能为空</string>
+    <string name="uname_was_uesed"></string>
+    <string name="error_phone">输入的手机号码格式不正确</string>
+    <string name="error_pw_or_user">用户名或密码错误，请从新输入</string>
+    <string name="no_username">该用户不存在</string>
+    <string name="orong_protocol">感谢您选择搬赚网投资助手提供的服务！在使用本服务前，请您务必先仔细阅读本协议以下条款：\n
+1、搬赚网投资助手仅为投资者提供投资及填报推荐信息的服务。同时使用独立的手机绑定及手势密码控制，保障您的账户使用安全。\n
+2、投资助手运用在线存储服务，根据用户的指令和密码为用户提供指定的账户操作服务。\n
+3、搬赚网投资助为投资人提供投资行为的记录，投资人的投资数据以正式的投资合同为准。\n
+4、搬赚网将不对投资人因手机及密码丢失所导致的账户损失承担责任。但平台将严格限制账户的提现账号一定是会员指定银行账户。</string>
+
+    <!-- HTTP　请求　 -->
+    <string name="requesting">正在发送请求……请稍候</string>
+    <string name="no_response">请求无响应，请从新发送</string>
+    <string name="server_exception">对不起，服务器出现异常请您稍后再访问</string>
+    <string name="responese_exception">响应异常，请重新发送请求</string>
+    <string name="timeout">请求连接超时，请重新发送请求</string>
+    <string name="no_network">当前网络不可用，请检查网络设置</string>
+    <string name="nullparamexception">空参数异常</string>
+    <string name="cancelrequest">已取消请求</string>
+    <string name="checking_captcha">正在验证……请稍候</string>
+    <string name="registering">正在注册……</string>
+    <string name="login_now">正在登录中……</string>
+    <string name="login_success">登录成功！</string>
+    <string name="loading">正在加载中……</string>
+    <string name="exit_app">退出程序</string>
+    <!-- 我的搬赚 -->
+    <string name="uploadimage">上传头像</string>
+    <string name="photograph">拍照</string>
+    <string name="select_from_albums">从相册选择</string>
+    <string name="editphoto">编辑头像</string>
+    <string name="albums">相册</string>
+    <string name="myorong">我的搬赚</string>
+    <string name="result_preview">剪切效果预览</string>
+    <string name="phoneformat">(%1$s***%2$s)</string>
+    <string name="uploade">上传</string>
+    <string name="quit">放弃</string>
+    <string name="relogin">重新登录</string>
+    <string name="relogin_message">由于你长时间与服务器断开连接，您必须重新登录才能使用</string>
+    <!--登录界面-->
+    <string name="input_true_phonenum">请输入正确的手机号~</string>
+    <string name="input_password">请输入密码哦~</string>
+    <string name="load_success">登录成功~</string>
+    <string name="load_fail">登录失败~</string>
+    <string name="forget_password">忘记密码</string>
+    <string name="login">登录</string>
+    <!--注册界面-->
+    <string name="nickname">请输入昵称</string>
+    <string name="pass_word_prompt">6-10位推荐组合型密码</string>
+    <string name="transaction_password">确认密码：</string>
+    <string name="register">注册</string>
+    <string name="auth_code">验证码</string>
+    <string name="get_verification_code">获取验证码</string>
+    <string name="input_phone_num">请输入手机号码</string>
+    <string name="input_verification_code">请输入验证码</string>
+    <string name="null_captcha">验证码不能为空</string>
+    <string name="next_step">下一步</string>
+    <string name="readed_and_agree">已阅读并同意</string>
+    <string name="protocol_of_orong">《搬赚使用协议》</string>
+    <string name="send_message">验证码发送成功！</string>
+    <string name="phone_has_register">手机号已注册</string>
+    <string name="check_netword_setting">检查网络设置</string>
+    <string name="fail_please_try_later">验证失败，请重试</string>
+    <string name="confirm_success">验证成功</string>
+    <string name="register_success_please_login">注册成功，请登录</string>
+    <string name="register_fail_please_try_later">注册失败请稍后重试</string>
+    <string name="password_is_distinct">两次输入的密码不一致</string>
 </resources>

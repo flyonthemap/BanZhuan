@@ -34,8 +34,6 @@ public class DetailActivity extends BaseActivity {
     private DetailInfoHolder detailInfoHolder;
     private DetailScreenHolder screenHolder;
     private FrameLayout bottom_layout,detail_info,detail_safe,detail_des,detail_toolbar;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

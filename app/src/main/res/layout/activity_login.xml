@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app2="http://schemas.android.com/apk/res-auto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/tools"
@@ -12,15 +13,7 @@
         android:layout_marginRight="32dp"
         android:layout_marginTop="55dp"
         android:gravity="center" >
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            app:civ_border_width="1dp"
-            app:civ_border_color="#f1eff1"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/iv_portrait"
-            android:src="@drawable/portrait"/>
+
         <FrameLayout
             android:layout_below="@+id/iv_portrait"
             android:id="@+id/username_layout"
@@ -36,6 +29,7 @@
                 android:inputType="number"
                 android:hint="@string/please_enter_the_account"
                 android:maxLength="11"
+                android:maxLines="1"
                 android:paddingRight="55dp"
                 android:paddingLeft="55dp" >
             </EditText>
@@ -44,12 +38,22 @@
                 android:layout_height="21dp"
                 android:layout_marginStart="8dp"
                 android:layout_gravity="left|center_vertical"
-                android:background="@mipmap/ic_launcher"
+                android:background="@drawable/iv_account"
                 android:visibility="visible"
                 android:layout_marginLeft="8dp" />
+
+            <Button
+                android:id="@+id/bt_username_clear"
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:background="@drawable/bt_clear"
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="10dp"
+                android:visibility="invisible" />
+
             <TextView
                 android:id="@+id/contry_sn"
-                android:layout_width="40dp"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_gravity="left|center_vertical"
                 android:layout_marginTop="4dp"
@@ -58,15 +62,6 @@
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
                 android:visibility="invisible"/>
-
-            <Button
-                android:id="@+id/bt_username_clear"
-                android:layout_width="23dp"
-                android:layout_height="23dp"
-                android:background="@drawable/btn_normal"
-                android:layout_gravity="right|center_vertical"
-                android:layout_marginRight="10dp"
-                android:visibility="invisible" />
         </FrameLayout>
         <FrameLayout
             android:id="@+id/usercode_layout"
@@ -82,17 +77,12 @@
                 android:layout_height="@dimen/default_edit_text_height"
                 android:inputType="textPassword"
                 android:maxLength="20"
+                android:maxLines="1"
                 android:hint="@string/please_enter_the_password"
                 android:paddingRight="60dp"
                 android:paddingLeft="60dp" >
             </EditText>
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="22dp"
-                android:layout_marginStart="7dp"
-                android:layout_gravity="left|center_vertical"
-                android:background="@mipmap/ic_launcher"
-                android:layout_marginLeft="7dp" />
+
             <Button
                 android:id="@+id/bt_pwd_eye"
                 android:layout_width="23dp"
@@ -101,15 +91,25 @@
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="10dp"
                 />
+
             <Button
                 android:id="@+id/bt_pwd_clear"
                 android:layout_width="23dp"
                 android:layout_height="23dp"
-                android:background="@drawable/btn_bg"
+                android:background="@drawable/btn_clear"
                 android:visibility="invisible"
                 android:layout_gravity="right|center_vertical"
                 android:layout_marginRight="33dp"
                 />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="22dp"
+                android:layout_marginStart="7dp"
+                android:layout_gravity="left|center_vertical"
+                android:background="@drawable/iv_password"
+                android:layout_marginLeft="7dp"
+                android:id="@+id/imageView" />
         </FrameLayout>
 
         <Button
@@ -118,7 +118,7 @@
             android:layout_height="@dimen/default_button_height"
             android:layout_below="@id/usercode_layout"
             android:layout_marginTop="30dp"
-            android:background="#ff336699"
+            android:background="@color/blue"
             android:textColor="@android:color/white"
             android:gravity="center"
             android:text="@string/login" />
@@ -142,6 +142,17 @@
             android:text="@string/register"
             android:textSize="16sp"
             android:visibility="visible" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            app2:civ_border_width="1dp"
+            app2:civ_border_color="@color/dark_gray"
+            android:background="@color/white2"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:id="@+id/iv_portrait"
+            android:src="@drawable/portrait"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 </RelativeLayout>

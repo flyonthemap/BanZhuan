@@ -6,6 +6,8 @@
     <!--读写sd卡的权限-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!--application的theme属性会应用到所有的Activity，而Activity的theme属性则只会应用特定的Activity-->
+    <uses-sdk  android:minSdkVersion="21"   android:targetSdkVersion="21" />
     <application
         android:name=".tools.BaseApplication"
         android:allowBackup="true"
@@ -15,25 +17,24 @@
         android:theme="@style/Theme.MyDesign">
         <!--欢迎界面-->
         <activity android:name=".activity.WelcomeActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <!--注册界面-->
         <activity android:name=".activity.RegisterActivity"
             android:label="@string/register"
+            android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTask"
             android:parentActivityName=".activity.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.LoginActivity"/>
+
         </activity>
         <!--主界面-->
         <activity
             android:launchMode="singleTask"
             android:name=".activity.MainActivity">
-
 
         </activity>
         <!--登录界面-->
@@ -41,9 +42,15 @@
 
             android:name=".activity.LoginActivity"
             android:label="@string/login"
+            android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTask"
             android:parentActivityName=".activity.MainActivity">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!--个人信息修改-->
         <activity

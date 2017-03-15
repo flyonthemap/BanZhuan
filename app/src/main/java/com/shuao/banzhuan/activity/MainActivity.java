@@ -62,8 +62,10 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
         setContentView(R.layout.activity_main);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // 设置左上角的点击事件
         if(mDrawerLayout != null)
             mDrawerLayout.addDrawerListener(this);
+        // 设置侧滑导航栏
         navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         if (navigationView != null) {

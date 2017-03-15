@@ -19,7 +19,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class AppProtocol extends BaseProtocol<List<AppInfo>>{
     private List<String> pictures;
-
     @Override
     public List<AppInfo> parseJson(String json) {
         Log.d(Config.DEBUG,"parse json in AppProtocol...");

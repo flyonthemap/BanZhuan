@@ -37,6 +37,7 @@ public abstract class BaseProtocol<T> {
                 saveJsonLocal(json, index);
             }
         }
+        
         if (json != null) {
             Log.d(Config.DEBUG,"parse json..");
             return parseJson(json);

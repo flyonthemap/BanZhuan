@@ -1,7 +1,17 @@
 package com.shuao.banzhuan.activity;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextPaint;
+import android.view.View;
+import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.shuao.banzhuan.R;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,15 +23,6 @@ public class BaseActivity extends AppCompatActivity {
     public final static List<BaseActivity> mActivities = new LinkedList<BaseActivity>();
     public static BaseActivity activity;
 
-
-//	private KillAllReceiver receiver;
-//	private class KillAllReceiver extends BroadcastReceiver{
-//
-//		@Override
-//		public void onReceive(Context context, Intent intent) {
-//			finish();
-//		}
-//	}
 
 
     @Override
@@ -38,6 +39,7 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 //		receiver=new KillAllReceiver();
 //		IntentFilter filter=new IntentFilter("com.shuao.banzhuan.tools");
@@ -76,12 +78,13 @@ public class BaseActivity extends AppCompatActivity {
 //        kill the main activity
         android.os.Process.killProcess(android.os.Process.myPid());
     }
+    // 初始化Toolbar
     protected void initToolbar() {
     }
+    // 初始化视图文件
     protected void initView() {
     }
+    // 初始化和View不相关的资源文件
     protected void init() {
     }
-
-
 }
