@@ -34,8 +34,9 @@ public class DownloadManager {
     // 记录观察者的集合
     private List<DownloadObserver> mObservers = new ArrayList<>();
 
-    // 使用线程安全的hashmap
+    // 使用线程安全的HashMap
     private ConcurrentHashMap<String,DownloadInfo> mDownloadInfo = new ConcurrentHashMap<>();
+    // 存储下载任务的集合
     private ConcurrentHashMap<String,DownloadTask> mDownloadTask = new ConcurrentHashMap<>();
     private volatile static DownloadManager downloadManager;
     private DownloadManager(){}
@@ -69,6 +70,7 @@ public class DownloadManager {
         }
 
     }
+    // 下载进度更新通知
     public void notifyDownloadProgressChanged(DownloadInfo downloadInfo){
         for(DownloadObserver observer:mObservers){
             observer.onDownloadProgressChanged(downloadInfo);
@@ -95,6 +97,7 @@ public class DownloadManager {
             Log.d(Config.DEBUG,"wait downloading....");
             notifyDownloadProgressChanged(downloadInfo);
         }
+        // 添加下载信息
         mDownloadInfo.put(downloadInfo.getAppId(),downloadInfo);
         // 初始化下载任务
         DownloadTask downloadTask = new DownloadTask(downloadInfo);

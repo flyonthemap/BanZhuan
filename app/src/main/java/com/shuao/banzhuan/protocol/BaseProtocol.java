@@ -21,7 +21,7 @@ import java.io.StringWriter;
 
 /**
  * Created by flyonthemap on 16/8/8.
- * 网络加载的框架
+ * 网络请求的框架，首先从本地加载，如果本地没有，则从服务器加载数据，并存储
  */
 public abstract class BaseProtocol<T> {
     public T load(int index) {
@@ -47,8 +47,11 @@ public abstract class BaseProtocol<T> {
     }
     private String loadServer(int index) {
         // 当服务的URL不需要index的值得时候，会自动过滤掉
-        HttpHelper.HttpResult httpResult = HttpHelper.get(HttpHelper.URL + getKey()
-                + "?index=" + index + getParams());
+        String url = Config.BASE_URL+"/task/list"+"?index="+index;
+//        HttpHelper.HttpResult httpResult = HttpHelper.get(HttpHelper.URL + getKey()
+//                + "?index=" + index + getParams());
+        HttpHelper.HttpResult httpResult = HttpHelper.get(url);
+        Log.d(Config.TAG,url);
         if (httpResult != null) {
             String json = httpResult.getString();
             Log.d(Config.DEBUG,json);

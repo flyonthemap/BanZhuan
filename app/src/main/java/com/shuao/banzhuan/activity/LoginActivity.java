@@ -1,15 +1,12 @@
 package com.shuao.banzhuan.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,8 +15,7 @@ import android.widget.Toast;
 import com.shuao.banzhuan.R;
 import com.shuao.banzhuan.data.Config;
 import com.shuao.banzhuan.tools.JSONUtils;
-import com.shuao.banzhuan.tools.JudgeUtils;
-import com.shuao.banzhuan.tools.LogUtils;
+import com.shuao.banzhuan.tools.MatchUtil;
 import com.shuao.banzhuan.tools.OKClientManager;
 import com.shuao.banzhuan.tools.SPUtils;
 import com.shuao.banzhuan.tools.UiTools;
@@ -37,14 +33,16 @@ import java.util.Map;
  * Android 登录类的实现
  */
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
-    private EditText et_account,et_pass;
-    private Button btn_login,btn_register;
+    private EditText et_account,et_pass; // 账号密码
+    private Button btn_login,btn_register; // 登录注册button
     private Button bt_username_clear;
     private Button bt_pwd_clear;
     private Button bt_pwd_eye;
     private TextWatcher username_watcher;
     private TextWatcher password_watcher;
     private LoadingDialog loadingDialog;
+    private String phoneNum ;
+    private String password ;
     OKClientManager okClientManager;
     private Handler handler = new Handler(){
         @Override
@@ -53,22 +51,26 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 case Config.LOGIN_SUCCESS:
                     loadingDialog.dismiss();
                     // 保存用户的登录状态，确保Activity启动时候的初始界面
+                    Toast.makeText(UiTools.getContext(),getString(R.string.login_success),Toast.LENGTH_SHORT).show();
                     SPUtils.put(UiTools.getContext(),Config.IS_LOGIN,true);
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
                     break;
+                // 账号或密码错误
                 case Config.LOGIN_ERROR:
                     loadingDialog.dismiss();
-                    Toast.makeText(UiTools.getContext(),"账号或密码错误",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UiTools.getContext(),getString(R.string.account_or_password_is_error),Toast.LENGTH_SHORT).show();
                     break;
+                // 手机号为注册
                 case Config.LOGIN_PHONE_UNREGISTER:
+                    Toast.makeText(UiTools.getContext(),getString(R.string.phone_has_no_register),Toast.LENGTH_SHORT).show();
                     loadingDialog.dismiss();
-                    Toast.makeText(UiTools.getContext(),"手机号未注册",Toast.LENGTH_SHORT).show();
                     break;
+                // 因为服务器端登录失败
                 case Config.LOAD_FAIL_FINISH:
                     loadingDialog.dismiss();
-                    Toast.makeText(UiTools.getContext(),"登录失败",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UiTools.getContext(), getString(R.string.login_fail),Toast.LENGTH_SHORT).show();
                 default:
                     loadingDialog.dismiss();
                     break;
@@ -146,6 +148,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 //向服务器提交登录数据
                 login();
                 break;
+            //一键清除之前的数据
             case R.id.bt_username_clear:
                 et_account.setText("");
                 break;
@@ -153,6 +156,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 et_pass.setText("");
                 break;
             case R.id.bt_pwd_eye:
+                // 密码是否可见的设置
                 if(et_pass.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
                     bt_pwd_eye.setBackgroundResource(R.drawable.eye_close);
                     et_pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
@@ -165,21 +169,23 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             case R.id.register:
                 Intent launchRegisterActivity  = new Intent(LoginActivity.this,RegisterActivity.class);
                 startActivity(launchRegisterActivity);
+                finish();
                 break;
         }
     }
 
     //  此方法中进行登录逻辑的处理
     private void login() {
-        if(et_account.getText().toString().equals("")||!JudgeUtils.isPhoneNumberValid(et_account.getText().toString())){
-            Toast.makeText(LoginActivity.this, R.string.input_true_phonenum,Toast.LENGTH_SHORT).show();
+        phoneNum = et_account.getText().toString();
+        password = et_pass.getText().toString();
+        if(!MatchUtil.isPhoneNum(phoneNum)){
+            Toast.makeText(LoginActivity.this, R.string.input_true_phoneNum,Toast.LENGTH_SHORT).show();
         }else if(et_pass.getText().toString().equals("")){
             Toast.makeText(LoginActivity.this, R.string.input_password,Toast.LENGTH_SHORT).show();
         }else{
-           // 显示对话框
+            // 显示对话框
             loadingDialog.show();
-            String phoneNum = et_account.getText().toString();
-            String password = et_pass.getText().toString();
+
             Map<String,String> params = new HashMap<>();
             params.put(Config.PHONE,phoneNum);
             params.put(Config.PASSWORD,password);

@@ -1,5 +1,6 @@
 package com.shuao.banzhuan.holder;
 
+import android.support.v7.widget.RecyclerView;
 import android.text.format.Formatter;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,29 +14,33 @@ import com.shuao.banzhuan.tools.UiTools;
 
 /**
  * Created by dmtec on 2016/8/23.
+ *
  */
-public class AppHolder extends BaseHolder<AppInfo> {
+public class AppHolder extends BaseRecyclerHolder<AppInfo> {
 
     private TextView tvName;
     private ImageView ivIcon;
     private TextView tvSize;
     private TextView tvDesc;
-    private RatingBar rbStar;
+
+    public AppHolder(View itemView) {
+        super(itemView);
+    }
 
     @Override
-    public View initView() {
-        View view = View.inflate(UiTools.getContext(), R.layout.app_item,
-                null);
+    public void initView(View view) {
+
         tvName = (TextView) view.findViewById(R.id.tv_item_title);
         ivIcon = (ImageView) view.findViewById(R.id.iv_item_icon);
         tvSize = (TextView) view.findViewById(R.id.tv_item_size);
-        return view;
     }
+
+
 
     @Override
     public void refreshView(AppInfo data) {
         if (data != null) {
-            tvName.setText(data.getName()                      );
+            tvName.setText(data.getName());
             tvSize.setText(Formatter.formatFileSize(UiTools.getContext(),
                     data.getSize()));
 //            mBitmapUtils.display(ivIcon, HttpHelper.URL + "image?name="

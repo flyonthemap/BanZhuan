@@ -17,8 +17,7 @@ import com.shuao.banzhuan.view.LoadingPage;
 import java.util.List;
 
 /**
- * Created by flyonthemap on 16/7/29.
- * 共性代码提取到基类中，如何增加代码的可阅读性，将代码拆分到其他的类中
+ * BaseFragment抽取Fragment中共性的加载提示逻辑,将Fragment中要显示的界面内容抽取为LoadingPage
  */
 public abstract class  BaseFragment extends Fragment {
 
@@ -42,7 +41,8 @@ public abstract class  BaseFragment extends Fragment {
                 }
             };
         }else{
-            ViewUtils.removeParent(loadingPage);
+            // 从父容器中移除当前视图
+            ViewUtils.removeFromParent(loadingPage);
         }
 
 
@@ -57,8 +57,7 @@ public abstract class  BaseFragment extends Fragment {
     }
 
     //    根据不同的数据，返回不同的状态
-    public LoadingPage.LoadResult checkData(List data) {
-//        Log.d(Config.DEBUG,""+data.size());
+    public LoadingPage.LoadResult getResultByResponse(List data) {
         if(data == null){
             return LoadingPage.LoadResult.error;
         }else{

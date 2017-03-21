@@ -39,9 +39,9 @@ public class DetailInfoHolder extends BaseHolder<AppInfo>{
         // 应用大小
         if(appInfo != null){
 //            Log.d(Config.DEBUG,appInfo.getAppId());
-            Log.d(Config.DEBUG,appInfo.getName());
-            Log.d(Config.DEBUG,appInfo.getVersion());
-            Log.d(Config.DEBUG,appInfo.getBonus()+"");
+//            Log.d(Config.DEBUG,appInfo.getName());
+//            Log.d(Config.DEBUG,appInfo.getVersion());
+//            Log.d(Config.DEBUG,appInfo.getBonus()+"");
             Log.d(Config.DEBUG,appInfo.getSize()+"");
 //            Log.d(Config.DEBUG,appInfo.getTaskType());
             tv_item_size.setText("大小:"+Formatter.formatFileSize(UiTools.getContext(),appInfo.getSize()));

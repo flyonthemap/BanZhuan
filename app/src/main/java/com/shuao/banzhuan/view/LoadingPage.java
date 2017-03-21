@@ -12,8 +12,7 @@ import com.shuao.banzhuan.tools.UiTools;
 import com.shuao.banzhuan.tools.ViewUtils;
 
 /**
- * Created by flyonthemap on 16/8/4.
- * 将LoadingPage抽取出来
+ * LoadingPage功能是显示Fragment中的界面，设置成FrameLayout的目的主要是能方便进行布局内容的替换
  */
 
 
@@ -29,7 +28,7 @@ public abstract class LoadingPage extends FrameLayout {
     public static final int STATE_SUCCESS = 4;
     //    注意这个状态不能设置为静态的，主要是为了避免所有的页面共享这一个状态
     public int curState = STATE_UNKNOWN;
-    //    几种不同的加载界面
+    //    根据不同的结果展示不同的界面
     private View loadingView;
     private View errorView;
     private View emptyView;
@@ -68,16 +67,19 @@ public abstract class LoadingPage extends FrameLayout {
 
 
     private void init() {
+        // 创建正在加载中界面
         loadingView = createLoadingView();
         if (loadingView != null) {
             this.addView(loadingView, new FrameLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
+        // 创建加载错误界面
         errorView = createErrorView();
         if (errorView != null) {
             this.addView(errorView, new FrameLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         }
+        // 创建服务器没有加载数据的界面
         emptyView = createEmptyView();
         if (emptyView != null) {
             this.addView(emptyView, new FrameLayout.LayoutParams(
@@ -86,7 +88,7 @@ public abstract class LoadingPage extends FrameLayout {
         showPage();
     }
 
-    //    load the different interface according to the load result
+    // 根据从服务器加载返回的结果
     private void showPage() {
         if (loadingView != null) {
             loadingView.setVisibility(curState == STATE_UNKNOWN
@@ -119,6 +121,7 @@ public abstract class LoadingPage extends FrameLayout {
         // 请求服务器 返回一个结果
         new Thread() {
             public void run() {
+                // 加载界面停顿展示两秒
                 SystemClock.sleep(2000);
 //                请求服务器之后进行状态变换
                 final LoadResult result = load();
@@ -162,7 +165,7 @@ public abstract class LoadingPage extends FrameLayout {
         return view;
     }
 
-    //    create the loading
+    //    创建正在加载中的界面
     private View createLoadingView() {
 
         View view = View

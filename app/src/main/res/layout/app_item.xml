@@ -2,7 +2,7 @@
 <!-- 凡是以layout开头的属性 其实都是经过父容器批准才能生效  因为在listView 中 layout_height 无论写什么熟悉 都是包裹内容 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="wrap_content" >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="112dp"
@@ -102,7 +102,7 @@
             android:layout_marginRight="12dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:singleLine="true"
+            android:maxLines="1"
             android:textColor="#ff717171"
             android:textSize="14sp"
             android:text="这是一个注册类的任务，总奖励20万哦~"/>

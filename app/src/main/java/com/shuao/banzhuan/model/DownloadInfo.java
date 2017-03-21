@@ -7,6 +7,7 @@ import java.io.File;
 
 /**
  * Created by flyonthemap on 16/8/17.
+ * 下载信息的封装类
  *
  */
 public class DownloadInfo {

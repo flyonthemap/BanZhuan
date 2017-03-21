@@ -31,7 +31,7 @@ public abstract class ListBaseAdapter extends DefaultAdapter<AppInfo> {
     @Override
     protected BaseHolder<AppInfo> getHolder() {
         Log.d(Config.DEBUG,"getHolder()");
-        return new AppHolder();
+        return null;
     }
 
     @Override

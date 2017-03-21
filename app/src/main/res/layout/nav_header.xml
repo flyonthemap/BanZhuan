@@ -13,9 +13,9 @@
     <de.hdodenhof.circleimageview.CircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:civ_border_width="1dp"
-        app:civ_border_color="#f2f2f2"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
+        app:civ_border_color="@color/dark_gray"
+        android:layout_width="@dimen/portrait_size"
+        android:layout_height="@dimen/portrait_size"
         android:id="@+id/big_iv_portrait"
         android:src="@drawable/portrait"
         android:layout_centerVertical="true"
@@ -31,10 +31,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:text="100元"
-            android:textSize="22sp"
-            android:textColor="#f9faf9"
+            android:textSize="@dimen/f26"
+            android:textColor="@color/result_view"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -45,12 +44,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="在地图上飞行"
-            android:textSize="12sp"
+            android:textSize="@dimen/f16"
+            android:textColor="@color/result_view"
             android:id="@+id/tv_nickname"
             />
-
-
-
 
     </RelativeLayout>
 

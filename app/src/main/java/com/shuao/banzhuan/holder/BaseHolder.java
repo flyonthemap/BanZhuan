@@ -4,7 +4,7 @@ import android.view.View;
 
 /**
  * Created by flyonthemap on 16/8/9.
- * holder和view之间形成了一种互相引用的结构
+ * 这里ListView中Holder的拆分部分
  */
 
 public abstract class BaseHolder<Data>  {
@@ -13,9 +13,10 @@ public abstract class BaseHolder<Data>  {
     public BaseHolder(){
         // new BaseHolder的时候会初始化数据
         contentView = initView();
-        // 做标记
+        //将Tag设置为contentView的存储结构
         contentView.setTag(this);
     }
+    // 能够在Adapter中获取view对象
     public View getContentView() {
         return contentView;
     }
@@ -27,8 +28,8 @@ public abstract class BaseHolder<Data>  {
     public Data getData(){
         return data;
     }
-    // 创建界面
+    // 初始化Holder中的控件
     public  abstract View initView();
-    // 根据数据刷新界面
+    // 填充控件中的数据
     public abstract void refreshView(Data data);
 }

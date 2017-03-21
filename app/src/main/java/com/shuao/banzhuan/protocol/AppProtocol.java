@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by flyonthemap on 16/8/8.
- * 加载解析app需要的数据
+ * 加载解析app需要
  */
 public class AppProtocol extends BaseProtocol<List<AppInfo>>{
     private List<String> pictures;
@@ -41,6 +41,7 @@ public class AppProtocol extends BaseProtocol<List<AppInfo>>{
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObj = jsonArray.getJSONObject(i);
                 AppInfo info=new AppInfo();
+                Log.d(Config.TAG,"appID="+jsonObj.getString("appID"));
                 info.setAppId(jsonObj.getString("appID"));
                 info.setBonus(jsonObj.getInt("reward"));
                 info.setName(jsonObj.getString("taskName"));
@@ -48,7 +49,6 @@ public class AppProtocol extends BaseProtocol<List<AppInfo>>{
                 info.setSize(jsonObj.getLong("size"));
                 info.setDescription(jsonObj.getString("brief"));
                 info.setTaskId(jsonObj.getString("taskID"));
-//                Log.d(Config.DEBUG,"enenene"+jsonObj.toString());
                 appInfoList.add(info);
 
             }

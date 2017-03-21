@@ -16,10 +16,12 @@ import com.shuao.banzhuan.tools.UiTools;
 
 import java.util.List;
 /*
-* 这里实现了ListView加载更多的逻辑
+* 这里实现了ListView加载更多的逻辑，不同的ListView需要的数据不一样，所以要使用泛型
+* adapter的抽象
 * */
 
 public abstract class DefaultAdapter<Data> extends BaseAdapter implements OnItemClickListener {
+    // 为了让子类能够运用
     protected List<Data> data;
     private static final int DEFAULT_ITEM = 0;
     private static final int MORE_ITEM = 1;
@@ -62,7 +64,7 @@ public abstract class DefaultAdapter<Data> extends BaseAdapter implements OnItem
         return data.get(position);
     }
 
-    /** 根据位置 判断当前条目是什么类型 */
+    // 获取当前的条目是什么类型
     @Override
     public int getItemViewType(int position) {
         if (position == data.size()) { // 当前是最后一个条目
@@ -75,7 +77,7 @@ public abstract class DefaultAdapter<Data> extends BaseAdapter implements OnItem
         return DEFAULT_ITEM;
     }
 
-    /** 当前ListView 有几种不同的条目类型 */
+    // 当前ListView有几种类型
     @Override
     public int getViewTypeCount() {
         return super.getViewTypeCount() + 1; // 2 有两种不同的类型
@@ -85,23 +87,22 @@ public abstract class DefaultAdapter<Data> extends BaseAdapter implements OnItem
     public long getItemId(int position) {
         return position;
     }
-
     public View getView(int position, View convertView, ViewGroup parent) {
         BaseHolder holder = null;
 
-        switch (getItemViewType(position)) {  // 判断当前条目时什么类型
+        // 根据位置来判断当前题目的类型，从而获取不同的Holder
+        switch (getItemViewType(position)) {
             case MORE_ITEM:
-                if(convertView == null){
+                if (convertView == null) {
                     holder = getMoreHolder();
-                }else{
+                } else {
                     holder = (BaseHolder) convertView.getTag();
                 }
                 break;
-            default:
+            case DEFAULT_ITEM:
                 if (convertView == null) {
                     holder = getHolder();
                 } else {
-
                     holder = (BaseHolder) convertView.getTag();
                 }
                 if (position < data.size()) {
@@ -109,8 +110,11 @@ public abstract class DefaultAdapter<Data> extends BaseAdapter implements OnItem
                 }
                 break;
         }
+
         return holder.getContentView();  //  如果当前Holder 恰好是MoreHolder  证明MoreHOlder已经显示
     }
+
+
     private MoreHolder holder;
     private BaseHolder getMoreHolder() {
         if(holder!=null){
@@ -133,6 +137,7 @@ public abstract class DefaultAdapter<Data> extends BaseAdapter implements OnItem
     /**
      * 当加载更多条目显示的时候 调用该方法
      */
+
     public void loadMore() {
         ThreadManager.getThreadManager().createLongPool().execute(new Runnable() {
 
@@ -147,7 +152,7 @@ public abstract class DefaultAdapter<Data> extends BaseAdapter implements OnItem
                         if(newData == null){
 
                             holder.setData(MoreHolder.LOAD_ERROR);//
-                        }else if(newData.size() < 20){
+                        }else if(newData.size() < 10){
                             Log.d(Config.DEBUG,"has no more....");
                             holder.setData(MoreHolder.HAS_NO_MORE);
                         }else{

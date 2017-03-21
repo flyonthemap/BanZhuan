@@ -13,7 +13,7 @@ import android.view.ViewParent;
  * 从父容器上移除当前视图
  */
 public class ViewUtils {
-    public static void removeParent(View view){
+    public static void removeFromParent(View view){
         ViewParent parent = view.getParent();
         if (parent instanceof ViewGroup){
             ((ViewGroup) parent).removeView(view);

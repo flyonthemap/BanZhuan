@@ -55,4 +55,5 @@
     <dimen name="pad20">14dp</dimen>
     <dimen name="pad9">6dp</dimen>
     <dimen name="pad12">9dp</dimen>
+    <dimen name="portrait_size">120dp</dimen>
 </resources>

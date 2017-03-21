@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <!--application的theme属性会应用到所有的Activity，而Activity的theme属性则只会应用特定的Activity-->
-    <uses-sdk  android:minSdkVersion="21"   android:targetSdkVersion="21" />
     <application
         android:name=".tools.BaseApplication"
         android:allowBackup="true"
@@ -35,25 +34,26 @@
         <activity
             android:launchMode="singleTask"
             android:name=".activity.MainActivity">
-
-        </activity>
-        <!--登录界面-->
-        <activity
-
-            android:name=".activity.LoginActivity"
-            android:label="@string/login"
-            android:configChanges="keyboardHidden|orientation"
-            android:launchMode="singleTask"
-            android:parentActivityName=".activity.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!--登录界面-->
+        <activity
+            android:launchMode="singleTask"
+            android:name=".activity.LoginActivity"
+            android:label="@string/login"
+            android:configChanges="keyboardHidden|orientation"
+            android:parentActivityName=".activity.MainActivity">
+
+
+
+        </activity>
         <!--个人信息修改-->
         <activity
+            android:launchMode="singleTask"
             android:name=".activity.PersonalInfoActivity"
             android:label="@string/change_personal_info"
             android:parentActivityName=".activity.MainActivity">

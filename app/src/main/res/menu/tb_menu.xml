@@ -10,7 +10,6 @@
         android:id="@+id/action_exchange"
         android:title="@string/hisExchange"
         app:showAsAction="never">
-
     </item>
 
 </menu>

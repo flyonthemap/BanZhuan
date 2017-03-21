@@ -35,11 +35,11 @@ import static com.shuao.banzhuan.data.Config.BASE_URL;
  */
 
 public class OKClientManager {
-    //上传JSON格式的数据
+    // 上传JSON格式的数据
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8");
-    // 指定编码格式的表单MEDIA_TYPE，这里指定了服务器的解码码表
+    // 指定提交正文的类型，否则无法获取post请求体中的内容
     private static final MediaType MEDIA_TYPE_FORM = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
-    //上传图片
+    // 上传图片
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
     private OkHttpClient okHttpClient;
     private volatile static OKClientManager okManager;
@@ -201,7 +201,9 @@ public class OKClientManager {
         ThreadManager.getThreadManager().createLongPool().execute(new Runnable() {
             @Override
             public void run() {
+//                这里用的是多段式提交
                 RequestBody requestBody = new MultipartBody.Builder()
+
                         .setType(MultipartBody.FORM)
                         .addFormDataPart("userId", "c1e0c8773841409ebb9f")
                         .addFormDataPart("portrait", "logo-square.jpg",

@@ -32,7 +32,7 @@ import java.io.InputStream;
 
 public class HttpHelper {
 
-    public static final String URL = "http://172.16.1.118:7080/";
+    public static final String URL = Config.BASE_URL;
 
     /** get请求，获取返回字符串内容 */
     public static HttpResult get(String url) {

@@ -44,16 +44,12 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
     private String[] tabNames;
     private long mExitTime;
     private SharedPreferences sharedPreferences;
+    // 侧滑头像
     private CircleImageView circlePortrait;
     private TextView tv_income, tv_nickname;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
     private Toolbar toolbar;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
 
     //  初始化出界面中的控件
     @Override
@@ -71,24 +67,26 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         if (viewPager != null) {
             viewPager.setAdapter(new MainAdapter(getSupportFragmentManager()));
         }
 
 
         // 对Tab标签的时间进行设置
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         if(tabLayout != null)
             tabLayout.setupWithViewPager(viewPager);
-        if(viewPager!=null)
+        if(viewPager!=null) {
             viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int position) {
-                    //当页面被选中的时候
+                    //选中不同的tab标签的时候，切换不同的Activity
                     FragmentFactory.createFragment(position).changeState();
                 }
             });
+        }
+
     }
 
 
@@ -98,9 +96,8 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
-        // 给Toolbar增加头像
-        //  ab.setIcon(R.mipmap.ic_launcher);
         if (ab != null) {
+            // 设置首页的标签
             ab.setHomeAsUpIndicator(R.drawable.ic_menu);
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setHomeButtonEnabled(true);
@@ -124,6 +121,7 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
 
     @Override
     public void onDrawerOpened(View drawerView) {
+        // drawer中的内容，必须在onDrawerOpened中加载
         // 加载Header中的内容
         final View header = navigationView.getHeaderView(0);
         // 当点击用户头像的时候，进入个人信息界面
@@ -180,6 +178,7 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
 
     }
 
+    // 设置两次点击back按钮的事件
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -263,6 +262,7 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
 
         if(Config.nickName == null || Config.income == 0){
             //从服务器加载数据
+            
         }else {
             Config.nickName = sharedPreferences.getString(Config.STR_NICKNAME, null);
             Config.income = sharedPreferences.getLong(Config.STR_INCOME,0);
