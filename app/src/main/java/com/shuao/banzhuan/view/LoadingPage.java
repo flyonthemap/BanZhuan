@@ -8,8 +8,8 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.shuao.banzhuan.R;
+import com.shuao.banzhuan.manager.ThreadManager;
 import com.shuao.banzhuan.tools.UiTools;
-import com.shuao.banzhuan.tools.ViewUtils;
 
 /**
  * LoadingPage功能是显示Fragment中的界面，设置成FrameLayout的目的主要是能方便进行布局内容的替换
@@ -119,11 +119,11 @@ public abstract class LoadingPage extends FrameLayout {
         }
         // 请求服务器 获取服务器上数据 进行判断
         // 请求服务器 返回一个结果
-        new Thread() {
+        ThreadManager.getThreadManager().createLongPool().execute(new Runnable() {
+            @Override
             public void run() {
-                // 加载界面停顿展示两秒
                 SystemClock.sleep(2000);
-//                请求服务器之后进行状态变换
+                // 请求服务器之后进行状态变换
                 final LoadResult result = load();
                 if (UiTools.getContext() != null) {
                     UiTools.runOnUiThread(new Runnable() {
@@ -138,8 +138,9 @@ public abstract class LoadingPage extends FrameLayout {
                         }
                     });
                 }
-            };
-        }.start();
+            }
+        });
+
         showPage();
 
     }
@@ -174,7 +175,7 @@ public abstract class LoadingPage extends FrameLayout {
     }
 
     public abstract View createSuccessView();
-    //  load data from sever
+    //  从服务器加载数据
     public abstract LoadResult load() ;
 
 

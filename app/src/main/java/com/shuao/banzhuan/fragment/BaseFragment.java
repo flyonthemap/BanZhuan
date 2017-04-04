@@ -49,14 +49,14 @@ public abstract class  BaseFragment extends Fragment {
         return loadingPage;
     }
 
-
+    // 改变界面显示的不同视图
     public void changeState(){
         if(loadingPage != null){
             loadingPage.changeState();
         }
     }
 
-    //    根据不同的数据，返回不同的状态
+    //    根据加载的不同数据，返回不同的状态
     public LoadingPage.LoadResult getResultByResponse(List data) {
         if(data == null){
             return LoadingPage.LoadResult.error;

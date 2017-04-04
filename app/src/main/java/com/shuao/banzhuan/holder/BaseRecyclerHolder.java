@@ -8,8 +8,8 @@ import android.view.View;
  * 这是RecyclerView的基类，主要负责控件的加载和数据填充
  */
 
-public abstract class BaseRecyclerHolder<Data> extends RecyclerView.ViewHolder {
-    private Data mData;
+public abstract class BaseRecyclerHolder<Data> extends RecyclerView.ViewHolder  {
+    protected Data mData;
     public BaseRecyclerHolder(View itemView) {
         super(itemView);
         initView(itemView);

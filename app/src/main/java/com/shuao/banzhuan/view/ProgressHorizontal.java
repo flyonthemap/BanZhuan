@@ -91,7 +91,7 @@ public class ProgressHorizontal extends View {
         invalidate();
     }
 
-    public void setProgressDrawble(Drawable drawable) {
+    public void setProgressDrawable(Drawable drawable) {
         if (mDrbProgress == drawable) {
             return;
         }

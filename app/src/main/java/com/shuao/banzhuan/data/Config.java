@@ -11,12 +11,19 @@ public class Config {
     public static final String DEBUG = "result";
     public static final String CODE = "code"; // 返回json结果的key值
     // 宿舍BaseURL
-//    public static final String BASE_URL = "http://192.168.31.130:8080/banzhuan";
+//    public static final String BASE_URL = "http://192.168.31.130:8080/banzhuan/";
+    public static final String BASE_URL = "http://192.168.1.126:8080/banzhuan/";
+//  宾馆的BaseURL
 
-    public static final String BASE_URL = "http://192.168.2.2:8080/banzhuan";
-//    public static final String BASE_URL = "http://192.168.43.137:8080/banzhuan";
     // 注册界面URL
     public static final String GET_CODE_URI = "user/authCode";
+    // 图书馆的URL
+//    public static final String BASE_URL = "http://10.177.102.210:8080/banzhuan/";
+
+//    public static final String BASE_URL = "http://192.168.43.137:8080/banzhuan";
+public static final String BASE_IMAGE_URL = BASE_URL+"image";
+//    public static final String BASE_URL = "http://192.168.2.2:8080/banzhuan/";
+
     public static final String REGISTER_URI = "user/reg";
     // 注册界面提示码
     public static final int GET_CODE_PHONE_EXIST = 1003; // 手机号已经注册
@@ -42,8 +49,17 @@ public class Config {
     public static final int LOAD_SUCC = 0x001;
     public static final int LOAD_FAIL = 0x002;
     public static final int LOAD_FAIL_FINISH = 0x003;
+    // 应用界面相关的key值
+    public static  final String STR_PACK_NAME = "packageName";
+    public static  final String STR_ICON_URL = "iconUrl";
+    public static final String STR_ID = "id";
+    public static  final String STR_DOWNLOAD_URL = "downloadUrl";
+    public static final String STR_SIZE = "size";
+    public static final String STR_SCREEN = "screen";
+    public static final String STR_DESCRIPTION = "des";
+    public static final String STR_NAME = "name";
 
-
+    public static final String STR_REWARD = "reward";
     public static final String USER_ID = "";
     public static final boolean IS_MAN = false;
     public static final String STR_IS_MAN = "isMan";
@@ -51,13 +67,13 @@ public class Config {
     public static final String STR_BIRTHDAY = "birthday";
     public static final String STR_PORTRAIT = "portrait" ;
     public static final String STR_PORTRAIT_PATH = "portraitpath";
-    public static final String ICON_URL = "http://img1.imgtn.bdimg.com/it/u=2299165671,2554860548&fm=21&gp=0.jpg";
+
+
     public static final String UPLOAD_IMAGE_URL = "http://172.16.1.118:7080/user/portrait";
-
-
     public static final String DOWNLOAD_PORTRAIT_URL = "http://172.16.1.118:7080/download/portrait?userID=c1e0c8773841409ebb9f";
     public static final String STR_INCOME = "income";
     public static final String HOME_URL = "http://172.16.1.118:7080/task/list?index=0" ;
+    public static final int PER_PAGE_COUNT = 10;
 
 
 
@@ -111,7 +127,6 @@ public class Config {
     public final static String USERNAME = "userName";
     public final static String PASSWORD = "password";
     public final static String USERICONPATH = "usericonpath";// 用户图像保存的url  =qrcode+path;//用户的url+存储路径
-    // end sharedPeferences
 
     // 加密密码
     public final static String ENCODEPASSWORD = "AAAcom.orongaaa";
@@ -122,7 +137,7 @@ public class Config {
     public final static int MAXFIESNUM=80;//最多允许保存80张图片
     public final static int DELFIESNUM=30;//每次删除的图片数量
     public static final String USER_REGISTER_URL = "http://172.16.1.118:7080/user/reg";
-    public static final String DOWNLOAD_URL = "http://172.16.1.118:7080/download/app?appID=app2";
+    public static final String DOWNLOAD_URL = "http://172.16.1.118:7080/download/";
     public static final int PAGE_AMOUNT = 10;
 
 }

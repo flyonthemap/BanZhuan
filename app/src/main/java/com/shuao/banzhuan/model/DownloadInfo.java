@@ -1,116 +1,82 @@
 package com.shuao.banzhuan.model;
 
+import android.os.Environment;
+
 import com.shuao.banzhuan.manager.DownloadManager;
-import com.shuao.banzhuan.tools.FileUtils;
+import com.shuao.banzhuan.model.AppInfo;
 
 import java.io.File;
 
-/**
- * Created by flyonthemap on 16/8/17.
- * 下载信息的封装类
- *
- */
 public class DownloadInfo {
-    //应用id
-    private String id;
-    //应用的名字
-    private String name;
-    //下载的链接
-    private String downloadUrl;
-    //安装包的大小
-    private long size;
-    //下载的包名
-    private String packName;
-    //当前的下载位置
-    private long currentPos;
-    //当前的状态
-    private int currentState;
 
-    private String path;
+    public String id;
+    public String name;
+    public String downloadUrl;
+    public long size;
+    public String packageName;
 
-    //获取下载进度0-1
-    public float getProgress(){
-        if(size == 0){
+    public long currentPos;// 当前下载位置
+    public int currentState;// 当前下载状态
+    public String path;// 下载到本地文件的路径
+
+    public static final String BANZHUAN = "banzhuan";// sdcard根目录文件夹名称
+    public static final String DOWNLOAD = "download";// 子文件夹名称, 存放下载的文件
+
+    // 获取下载进度(0-1)
+    public float getProgress() {
+        if (size == 0) {
             return 0;
         }
-        return currentPos/(float)size;
+
+        float progress = currentPos / (float) size;
+        return progress;
     }
 
-    public static DownloadInfo copy(AppInfo appInfo){
+    // 拷贝对象, 从AppInfo中拷贝出一个DownloadInfo
+    public static DownloadInfo copy(AppInfo info) {
         DownloadInfo downloadInfo = new DownloadInfo();
-        downloadInfo.id = appInfo.getAppId();
-        downloadInfo.size = appInfo.getSize();
-//        downloadInfo.downloadUrl = appInfo.getDownloadUrl();
-        downloadInfo.name = appInfo.getName();
-//        downloadInfo.packName = appInfo.getPackageName();
+
+        downloadInfo.id = info.getAppId();
+        downloadInfo.name = info.getName();
+        downloadInfo.downloadUrl = info.downloadUrl;
+        downloadInfo.packageName = info.getPackageName();
+        downloadInfo.size = info.getSize();
+
         downloadInfo.currentPos = 0;
-        // 默认的状态未下载
-        downloadInfo.currentPos = DownloadManager.STATE_UNDO;
-        downloadInfo.path = FileUtils.getDownloadPath(appInfo.getName()).getName();
-        return  downloadInfo;
+        downloadInfo.currentState = DownloadManager.STATE_NONE;// 默认状态是未下载
+        downloadInfo.path = downloadInfo.getFilePath();
+
+        return downloadInfo;
     }
 
-    public void setAppId(String id) {
-        this.id = id;
+    // 获取文件下载路径
+    public String getFilePath() {
+        StringBuffer sb = new StringBuffer();
+        String sdcard = Environment.getExternalStorageDirectory()
+                .getAbsolutePath();
+        sb.append(sdcard);
+        sb.append(File.separator);
+        sb.append(BANZHUAN);
+        sb.append(File.separator);
+        sb.append(DOWNLOAD);
+
+        if (createDir(sb.toString())) {
+            // 文件夹存在或者已经创建完成
+            return sb.toString() + File.separator + name + ".apk";// 返回文件路径
+        }
+
+        return null;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    private boolean createDir(String dir) {
+        File dirFile = new File(dir);
+
+        // 文件夹不存在或者不是一个文件夹
+        if (!dirFile.exists() || !dirFile.isDirectory()) {
+            return dirFile.mkdirs();
+        }
+
+        return true;// 文件夹存在
     }
 
-    public void setDownloadUrl(String downloadUrl) {
-        this.downloadUrl = downloadUrl;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public void setPackName(String packName) {
-        this.packName = packName;
-    }
-
-    public void setCurrentPos(long currentPos) {
-        this.currentPos = currentPos;
-    }
-
-    public void setCurrentState(int currentState) {
-        this.currentState = currentState;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getAppId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDownloadUrl() {
-        return downloadUrl;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public String getPackName() {
-        return packName;
-    }
-
-    public long getCurrentPos() {
-        return currentPos;
-    }
-
-    public int getCurrentState() {
-        return currentState;
-    }
-
-    public String getPath() {
-        return path;
-    }
 }

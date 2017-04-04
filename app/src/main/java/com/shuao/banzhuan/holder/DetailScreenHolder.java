@@ -32,12 +32,12 @@ public class DetailScreenHolder extends BaseHolder<AppInfo> {
     @Override
     public void refreshView(AppInfo appInfo) {
         // 获取图片的URL信息
-//        List<String> screen = appInfo.getScreen();
-        appInfo.setIconUrl(Config.ICON_URL);
+        List<String> screen = appInfo.getScreen();
+//        appInfo.setIconUrl(Config.ICON_URL);
         for (int i = 0; i < imageViews.length; i++) {
             if(i < 5){
                 //根据图片的URL来加载图片
-                PicassoUtils.loadImageWithSize(appInfo.getIconUrl(),90,150,imageViews[i]);
+                PicassoUtils.loadImageWithSize(Config.BASE_IMAGE_URL+"?name="+screen.get(i),90,150,imageViews[i]);
                 imageViews[i].setVisibility(View.VISIBLE);
             }else {
                 imageViews[i].setVisibility(View.GONE);

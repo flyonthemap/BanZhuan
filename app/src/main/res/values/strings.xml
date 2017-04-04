@@ -119,4 +119,6 @@
     <string name="register_fail_please_try_later">注册失败请稍后重试</string>
     <string name="password_is_distinct">两次输入的密码不一致</string>
     <string name="login_fail">登录失败</string>
+    <!--提现界面-->
+    <string name="withdraw">提现</string>
 </resources>

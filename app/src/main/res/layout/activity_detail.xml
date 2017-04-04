@@ -1,69 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/ll_aty_detail"
-    android:layout_width="match_parent"
+    android:id="@+id/ll_aty_detail_head"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
-
-
-    <ScrollView
-        android:id="@+id/scrollView"
+    android:orientation="vertical"
+    android:layout_width="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tl_detail"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
 
-        <LinearLayout
+        app:layout_scrollFlags="scroll|enterAlways">
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <LinearLayout
+        android:id="@+id/ll_aty_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:id="@+id/fl_detail_appinfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/list_item_bg_selector" >
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/fl_detail_step"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/list_item_bg_selector" >
+                </FrameLayout>
+
+                <HorizontalScrollView
+                    android:id="@+id/hsv_detail_pics"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#cccccc" >
+                </HorizontalScrollView>
+
+                <FrameLayout
+                    android:id="@+id/fl_detail_des"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/list_item_bg_selector"
+                    android:padding="3dp" >
+                </FrameLayout>
+            </LinearLayout>
+        </ScrollView>
+
+
+        <FrameLayout
+            android:id="@+id/fl_detail_download"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:background="@drawable/list_item_bg_selector">
+        </FrameLayout>
 
-            <FrameLayout
-                android:id="@+id/fl_detail_appinfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/list_item_bg_selector" >
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/fl_detail_step"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/list_item_bg_selector" >
-            </FrameLayout>
-
-            <HorizontalScrollView
-                android:id="@+id/hsv_detail_pics"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="#cccccc" >
-            </HorizontalScrollView>
-
-            <FrameLayout
-                android:id="@+id/fl_detail_des"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/list_item_bg_selector"
-                android:padding="3dp" >
-            </FrameLayout>
-        </LinearLayout>
-    </ScrollView>
-
-
-    <FrameLayout
-        android:id="@+id/fl_detail_download"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/detail_bottom_bg">
-    </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>

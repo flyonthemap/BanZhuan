@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shuao.banzhuan.R;
-import com.shuao.banzhuan.adapter.MyBaseRecyclerAdapter;
 import com.shuao.banzhuan.data.Config;
 import com.shuao.banzhuan.tools.UiTools;
 import com.shuao.banzhuan.tools.ViewUtils;
@@ -41,7 +40,7 @@ public class ActivityFragment extends BaseFragment {
         }
         recyclerView = new RecyclerView(getActivity());
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(new MainAdapter(UiTools.getContext()));
+//        recyclerView.setAdapter(new MainAdapter(UiTools.getContext()));
         return recyclerView;
     }
 
@@ -173,33 +172,6 @@ public class ActivityFragment extends BaseFragment {
         @Override
         public void onClick(View v) {
 
-        }
-    }
-    private class MainAdapter extends MyBaseRecyclerAdapter<OkHttpModel, ViewHolder> {
-
-        public MainAdapter(Context context) {
-            super(context, items);
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view;
-            if (viewType == 0) {
-                view = inflater.inflate(R.layout.item_main_list, parent, false);
-            } else {
-                view = inflater.inflate(R.layout.item_main_type, parent, false);
-            }
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return items.get(position).type;
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.bind(position, items.get(position));
         }
     }
 

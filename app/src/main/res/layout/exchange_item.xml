@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_marginLeft="10dp"
-    android:layout_marginRight="10dp"
-    android:layout_marginTop="20dp"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="70dp">
-
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="70dp"
-        android:layout_weight="1"
-        android:src="@drawable/portrait" />
     <LinearLayout
-        android:layout_width="0dp"
-        android:layout_weight="2"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/list_item_bg_normal">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/ci_exchange"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="2"
+            android:src="@drawable/exchange_alipay" />
+
         <TextView
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:layout_width="match_parent"
+            android:id="@+id/tv_exchangeName"
+            android:layout_weight="4"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/textcolor"
+            android:text="支付宝提现"/>
+
+        <Button
+            android:id="@+id/btn_action"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
             android:layout_gravity="center_vertical"
-            android:textSize="28sp"
-            android:textColor="#ff00ff"
-            android:text="支付宝"/>
-        <View
-            android:id="@+id/item_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/item_top"
-            android:layout_marginRight="8dp"
-            android:background="@color/item_divider" />
-        <TextView
-            android:layout_width="match_parent"
+            android:layout_marginRight="@dimen/f13"
             android:layout_weight="1"
-            android:layout_height="0dp"
-            android:textColor="#ff00ff"
-            android:text="10元起兑"/>
+            android:textColor="@color/red1"
+            android:background="@drawable/exchange_btn"
+            android:text="@string/withdraw" />
 
     </LinearLayout>
 

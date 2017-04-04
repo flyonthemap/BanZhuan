@@ -1,9 +1,5 @@
 package com.shuao.banzhuan.wrapper;
 
-/**
- * Created by flyonthemap on 2017/3/21.
- */
-
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.shuao.banzhuan.R;
 import com.shuao.banzhuan.adapter.BaseAdapter;
+import com.shuao.banzhuan.adapter.OnRecyclerViewItemClickListener;
 
 /**
  * Created by flyonthemap on 2017/3/21.
@@ -18,19 +15,22 @@ import com.shuao.banzhuan.adapter.BaseAdapter;
  *
  */
 
-public class LoadMoreAdapterWrapper<T> extends BaseAdapter<T> {
+public class LoadMoreAdapterWrapper<T> extends BaseAdapter<T>  {
     private BaseAdapter mAdapter;
-    private static final int mPageSize = 10;
-    private int mPagePosition = 0;
     private boolean hasMoreData = true;
     private OnLoad mOnLoad;
+    private OnRecyclerViewItemClickListener listener;
 
-    public LoadMoreAdapterWrapper(BaseAdapter adapter, OnLoad onLoad) {
+    public LoadMoreAdapterWrapper(BaseAdapter adapter) {
         mAdapter = adapter;
-        mOnLoad = onLoad;
     }
-
-
+    public  void setOnLoad(OnLoad load){
+        this.mOnLoad = load;
+    }
+    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener)
+    {
+        this.listener = listener;
+    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == R.layout.list_item_no_more) {
@@ -47,7 +47,7 @@ public class LoadMoreAdapterWrapper<T> extends BaseAdapter<T> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof LoadingItemVH) {
-            requestData(mPagePosition, mPageSize);
+            requestData();
         } else if (holder instanceof NoMoreItemVH) {
 
         } else {
@@ -55,18 +55,18 @@ public class LoadMoreAdapterWrapper<T> extends BaseAdapter<T> {
         }
     }
 
-    private void requestData(int pagePosition, int pageSize) {
+
+    private void requestData() {
 
         //网络请求,如果是异步请求，则在成功之后的回调中添加数据，并且调用notifyDataSetChanged方法，hasMoreData为true
-        //如果没有数据了，则hasMoreData为false，然后通知变化，更新recylerview
+        //如果没有数据了，则hasMoreData为false，然后通知变化，更新recyclerView
 
         if (mOnLoad != null) {
-            mOnLoad.load(pagePosition, pageSize, new ILoadCallback() {
+            mOnLoad.load( new ILoadCallback() {
                 @Override
                 public void onSuccess() {
 
                     notifyDataSetChanged();
-                    mPagePosition = (mPagePosition + 1) * mPageSize;
                     hasMoreData = true;
                 }
 
@@ -96,6 +96,7 @@ public class LoadMoreAdapterWrapper<T> extends BaseAdapter<T> {
         return mAdapter.getItemCount() + 1;
     }
 
+
     static class LoadingItemVH extends RecyclerView.ViewHolder {
 
         public LoadingItemVH(View itemView) {
@@ -112,6 +113,5 @@ public class LoadMoreAdapterWrapper<T> extends BaseAdapter<T> {
     }
 
 }
-// 回调处理加载更多逻辑
 
 

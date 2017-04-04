@@ -2,7 +2,8 @@
 <!-- 凡是以layout开头的属性 其实都是经过父容器批准才能生效  因为在listView 中 layout_height 无论写什么熟悉 都是包裹内容 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:id="@+id/fl_app_item">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="112dp"
@@ -26,29 +27,28 @@
 
             <RelativeLayout
                 android:id="@+id/item_action"
-                android:layout_width="70dp"
+                android:layout_width="120dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:gravity="center" >
 
                 <FrameLayout
-                    android:id="@+id/action_progress"
-                    android:layout_width="27dp"
-                    android:layout_height="27dp"
-                    android:layout_centerHorizontal="true"
-                    android:background="@drawable/ic_download" />
+                    android:id="@+id/fl_action_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true" />
 
                 <TextView
-                    android:id="@+id/tv_action_txt"
+                    android:id="@+id/tv_download"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/action_progress"
+                    android:layout_below="@id/fl_action_progress"
                     android:layout_marginTop="5dp"
                     android:ellipsize="end"
                     android:gravity="center"
-                    android:singleLine="true"
                     android:textColor="#ff7a7a7a"
-                    android:textSize="12dp"
+                    android:textSize="@dimen/f18"
+                    android:maxLines="1"
                     android:text="下载" />
             </RelativeLayout>
 

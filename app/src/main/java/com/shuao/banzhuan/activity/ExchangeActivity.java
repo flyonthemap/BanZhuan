@@ -1,12 +1,15 @@
 package com.shuao.banzhuan.activity;
 
-import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 
 import com.shuao.banzhuan.R;
+import com.shuao.banzhuan.adapter.AppAdapter;
 import com.shuao.banzhuan.adapter.ExchangeAdapter;
+import com.shuao.banzhuan.model.ExchangeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,29 +19,31 @@ import java.util.List;
  *
  */
 public class ExchangeActivity  extends BaseActivity{
-    private ListView listView;
-    private List<String>  data;
-//    private String[] data = {"支付宝","话费"};
+    private RecyclerView recyclerView;
+    private List<ExchangeInfo>  exchangeInfoList;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    protected void init() {
+        exchangeInfoList  = new ArrayList<>();
+        ExchangeInfo exchangeInfo1 = new ExchangeInfo("支付宝提现","提现",R.drawable.exchange_alipay);
+        ExchangeInfo exchangeInfo2 = new ExchangeInfo("微信提现","提现",R.drawable.exchange_wechat);
+        ExchangeInfo exchangeInfo3 = new ExchangeInfo("话费充值","充值",R.drawable.exchange_phone);
+        exchangeInfoList.add(exchangeInfo1);
+        exchangeInfoList.add(exchangeInfo2);
+        exchangeInfoList.add(exchangeInfo3);
     }
 
     @Override
     protected void initView() {
         setContentView(R.layout.activity_exchange);
-        data = new ArrayList<>();
-        data.add("支付宝");
-        data.add("支付宝");
-        data.add("支付宝");
-        data.add("支付宝");
-        data.add("支付宝");
-        data.add("支付宝");
-        listView = (ListView) findViewById(R.id.lv_exchange);
-        listView.setAdapter(new ExchangeAdapter(listView,data));
+        recyclerView = (RecyclerView) findViewById(R.id.rv_exchange);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
+        ExchangeAdapter exchangeAdapter = new ExchangeAdapter(this);
+        exchangeAdapter.appendData(exchangeInfoList);
+        recyclerView.setAdapter(exchangeAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
     @Override

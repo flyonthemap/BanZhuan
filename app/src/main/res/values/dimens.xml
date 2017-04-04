@@ -39,6 +39,7 @@
     <dimen name="spa18">12dp</dimen>
     <dimen name="spa15">10dp</dimen>
     <dimen name="spa3">3dp</dimen>
+    <dimen name="spa5">5dp</dimen>
     <dimen name="spa230">155dp</dimen>
     <dimen name="spa260">174dp</dimen>
     <dimen name="spa130">87dp</dimen>

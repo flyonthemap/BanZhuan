@@ -1,6 +1,9 @@
 package com.shuao.banzhuan.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +13,12 @@ import java.util.List;
  * BaseAdapter只负责数据封装
  */
 
-public abstract class BaseAdapter<Data> extends RecyclerView.Adapter {
+public abstract class BaseAdapter<Data> extends RecyclerView.Adapter  {
+
+    protected Context mContext;
+    protected LayoutInflater inflater;
     protected List<Data> mData = new ArrayList<>();
-
-
+    OnRecyclerViewItemClickListener listener;
     public void updateData(List mData) {
         this.mData.clear();
         appendData(mData);
@@ -34,4 +39,10 @@ public abstract class BaseAdapter<Data> extends RecyclerView.Adapter {
     public int getItemCount() {
         return mData.size();
     }
+    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener)
+    {
+        this.listener = listener;
+    }
+
+
 }

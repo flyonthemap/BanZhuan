@@ -62,6 +62,7 @@ public class FileUtils {
     }
 
 
+
     //    判断sd卡是否可用
     private static boolean isSDAvailable() {
         if (Environment.getExternalStorageState().equals(

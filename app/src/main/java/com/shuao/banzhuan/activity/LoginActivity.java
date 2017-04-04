@@ -41,9 +41,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private TextWatcher username_watcher;
     private TextWatcher password_watcher;
     private LoadingDialog loadingDialog;
-    private String phoneNum ;
-    private String password ;
-    OKClientManager okClientManager;
+
+    private OKClientManager okClientManager;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -159,7 +158,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                 // 密码是否可见的设置
                 if(et_pass.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
                     bt_pwd_eye.setBackgroundResource(R.drawable.eye_close);
-                    et_pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_NORMAL);
+                    et_pass.setInputType(InputType.TYPE_CLASS_TEXT);
                 }else{
                     bt_pwd_eye.setBackgroundResource(R.drawable.eye_open);
                     et_pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -176,8 +175,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
     //  此方法中进行登录逻辑的处理
     private void login() {
-        phoneNum = et_account.getText().toString();
-        password = et_pass.getText().toString();
+        String phoneNum = et_account.getText().toString();
+        String password = et_pass.getText().toString();
         if(!MatchUtil.isPhoneNum(phoneNum)){
             Toast.makeText(LoginActivity.this, R.string.input_true_phoneNum,Toast.LENGTH_SHORT).show();
         }else if(et_pass.getText().toString().equals("")){

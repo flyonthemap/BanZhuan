@@ -34,7 +34,7 @@ import java.util.ArrayList;
 public class BanZhuanApplication extends Application {
 
     public static BanZhuanApplication instance;// 实例化一个app
-    private static ArrayList<Activity> activitystack;// activity启动栈，记录栈中的activity实例
+    private static ArrayList<Activity> activityStack;// activity启动栈，记录栈中的activity实例
     public static ThreadPoolService service;
     public static UserInfo user = null;
     public static CookieStore cookieStore;
@@ -44,7 +44,7 @@ public class BanZhuanApplication extends Application {
         // TODO Auto-generated method stub
         instance = this;
 
-        activitystack = new ArrayList<Activity>();
+        activityStack = new ArrayList<Activity>();
         service = new ThreadPoolService();
         MyCrashHandler handler = MyCrashHandler.getInstance();
         handler.init(getApplicationContext());
@@ -57,31 +57,31 @@ public class BanZhuanApplication extends Application {
     public void onTerminate() {
         // TODO Auto-generated method stub
         // 程序安全退出
-        for (Activity activity : activitystack) {
+        for (Activity activity : activityStack) {
             activity.finish();
         }
-        activitystack.clear();
+        activityStack.clear();
         super.onTerminate();
     }
 
     /**
-     * 将应用程序的任务栈中的一activity实例添加到activitystack中
+     * 将应用程序的任务栈中的一activity实例添加到activityStack中
      *
      * @param activity
      *            一个activity实例
      */
     public static void addActivity2Stack(Activity activity) {
-        instance.activitystack.add(activity);
+        instance.activityStack.add(activity);
     }
 
     /**
-     * 经activity实例从activitystack中移除
+     * 经activity实例从activityStack中移除
      *
      * @param activity
      *            一个activity实例
      */
     public static void removeActivityFromStack(Activity activity) {
-        instance.activitystack.remove(activity);
+        instance.activityStack.remove(activity);
     }
 
     public static BanZhuanApplication getInstance() {
@@ -106,7 +106,7 @@ public class BanZhuanApplication extends Application {
     public static void showResultToast(int result, Context context) {
         switch (result) {
             case Config.NO_RESPONSE:
-                Toast.makeText(context, R.string.no_response, 0).show();
+                Toast.makeText(context, R.string.no_response, Toast.LENGTH_SHORT).show();
                 break;
             case Config.S_EXCEPTION:
                 Toast.makeText(context, R.string.server_exception, 0).show();
@@ -131,10 +131,10 @@ public class BanZhuanApplication extends Application {
 
                     @Override
                     public void buttonRightRespond() {
-                        Activity activity = activitystack.get(0);
-                        activitystack.remove(0);// 把登录界面提出来
+                        Activity activity = activityStack.get(0);
+                        activityStack.remove(0);// 把登录界面提出来
                         BanZhuanApplication.instance.onTerminate();
-                        activitystack.add(activity);// 重新放到栈中
+                        activityStack.add(activity);// 重新放到栈中
                     }
 
                     @Override

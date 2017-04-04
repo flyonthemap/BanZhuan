@@ -49,7 +49,7 @@ public abstract class BaseRecordActivity extends BaseActivity {
         return inflater.inflate(R.layout.atom_line_v_view, null);
     }
     // 添加头部的竖直线
-    protected void addVLine(LinearLayout headLayout){
+    protected void addHeaderVLine(LinearLayout headLayout){
         LinearLayout v_line = (LinearLayout)getVerticalLine();
         v_line.setLayoutParams(new LinearLayout.LayoutParams
                 (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -72,7 +72,7 @@ public abstract class BaseRecordActivity extends BaseActivity {
             arrHeadWidth[i] = width;
             // 如果不是最后一个条目，则添加竖线
             if(i != headMap.size()-1){
-                this.addVLine(headLayout);
+                this.addHeaderVLine(headLayout);
             }
         }
     }

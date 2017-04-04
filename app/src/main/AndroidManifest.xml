@@ -3,9 +3,9 @@
     package="com.shuao.banzhuan">
     <!--添加网络访问权限-->
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!--读写sd卡的权限-->
+    读写sd卡的权限
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>-->
     <!--application的theme属性会应用到所有的Activity，而Activity的theme属性则只会应用特定的Activity-->
     <application
         android:name=".tools.BaseApplication"

@@ -52,8 +52,7 @@ public class DetailInfoHolder extends BaseHolder<AppInfo>{
             // 设置应用的奖励金额
             tv_item_bonus.setText(appInfo.getBonus()+"万");
             // 根据图片的URL地址,!!!!!这里的URL地址还要继续进行完善
-            appInfo.setIconUrl(Config.ICON_URL);
-            PicassoUtils.loadImageWithHolder(appInfo.getIconUrl(),R.drawable.ic_default,iv_item_icon);
+            PicassoUtils.loadImageWithHolder(Config.BASE_IMAGE_URL+"?name="+appInfo.getIconUrl(),R.drawable.ic_default,iv_item_icon);
         }
     }
 }
