@@ -12,34 +12,31 @@ import com.shuao.banzhuan.model.DownloadInfo;
 import com.shuao.banzhuan.tools.UiTools;
 import com.shuao.banzhuan.view.ProgressHorizontal;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Created by flyonthemap on 16/8/18.
  * DetailDownloadHolder
  */
 public class DetailDownloadHolder extends BaseHolder<AppInfo> implements
-        DownloadManager.DownloadObserver, View.OnClickListener {
+        DownloadManager.DownloadObserver{
 
     private DownloadManager mDM;
-
     private int mCurrentState;
     private float mProgress;
 
-    private FrameLayout flProgress;
-    private Button btnDownload;
+    @BindView(R.id.fl_progress) FrameLayout flProgress;
+    @BindView(R.id.btn_download) Button btnDownload;
     private ProgressHorizontal pbProgress;
 
     @Override
     public View initView() {
         View view = UiTools.inflate(R.layout.layout_detail_download);
-        btnDownload = (Button) view.findViewById(R.id.btn_download);
-        btnDownload.setOnClickListener(this);
-
-        // 初始化自定义进度条
-        flProgress = (FrameLayout) view.findViewById(R.id.fl_progress);
-        flProgress.setOnClickListener(this);
+        ButterKnife.bind(this,view);
 
         pbProgress = new ProgressHorizontal(UiTools.getContext());
-//        pbProgress.setMinProgressWidth(FrameLayout.g);
         pbProgress.setProgressBackgroundResource(R.color.dark_gray);// 进度条背景图片
         pbProgress.setProgressResource(R.drawable.progress_normal);// 进度条图片
         pbProgress.setProgressTextColor(Color.WHITE);// 进度文字颜色
@@ -73,17 +70,13 @@ public class DetailDownloadHolder extends BaseHolder<AppInfo> implements
             mProgress = 0;
         }
 
-        refreshUI(mCurrentState, mProgress);
+        refreshProgress(mCurrentState, mProgress);
     }
 
     // 根据当前的下载进度和状态来更新界面
-    private void refreshUI(int currentState, float progress) {
-
-        //System.out.println("刷新ui了:" + currentState);
-
+    private void refreshProgress(int currentState, float progress) {
         mCurrentState = currentState;
         mProgress = progress;
-
         switch (currentState) {
             case DownloadManager.STATE_NONE:// 未下载
                 flProgress.setVisibility(View.GONE);
@@ -131,70 +124,51 @@ public class DetailDownloadHolder extends BaseHolder<AppInfo> implements
 
     }
 
-    // 主线程更新ui 3-4
+
+
+    // 状态更新
+    @Override
+    public void onDownloadStateChanged(DownloadInfo info) {
+
+        refreshUIOnMainThread(info);
+    }
+
+    @Override
+    public void onDownloadProgressChanged(DownloadInfo info) {
+
+        refreshUIOnMainThread(info);
+    }
     private void refreshUIOnMainThread(final DownloadInfo info) {
-        // 判断下载对象是否是当前应用
-        AppInfo appInfo = getData();
-        if (appInfo.getAppId().equals(info.id)) {
+        if (isCurAppData(info.id)) {
             UiTools.runOnUiThread(new Runnable() {
 
                 @Override
                 public void run() {
-                    refreshUI(info.currentState, info.getProgress());
+                    refreshProgress(info.currentState, info.getProgress());
                 }
             });
         }
     }
 
-    // 状态更新
-    @Override
-    public void onDownloadStateChanged(DownloadInfo info) {
-        // 判断下载对象是否是当前应用
-        // AppInfo appInfo = getData();
-        // if (appInfo.id.equals(info.id)) {
-        // System.out.println("当前状态:" + info.currentState);
-        // refreshUIOnMainThread(info.currentState, info.getProgress());
-        refreshUIOnMainThread(info);
-        // }
-    }
-
-    // 进度更新, 子线程
-    @Override
-    public void onDownloadProgressChanged(DownloadInfo info) {
-        // 判断下载对象是否是当前应用
-        // AppInfo appInfo = getData();
-        // if (appInfo.id.equals(info.id)) {
-        // System.out.println("当前状态:" + info.currentState + ";"
-        // + info.getProgress());
-        // refreshUIOnMainThread(info.currentState, info.getProgress());
-        refreshUIOnMainThread(info);
-        // }
-    }
-
-    @Override
-    public void onClick(View v) {
-        //System.out.println("点击事件响应了:" + mCurrentState);
-
-        switch (v.getId()) {
-            case R.id.btn_download:
-            case R.id.fl_progress:
-                // 根据当前状态来决定下一步操作
-                if (mCurrentState == DownloadManager.STATE_NONE
-                        || mCurrentState == DownloadManager.STATE_ERROR
-                        || mCurrentState == DownloadManager.STATE_PAUSE) {
-                    mDM.download(getData());// 开始下载
-                } else if (mCurrentState == DownloadManager.STATE_DOWNLOAD
-                        || mCurrentState == DownloadManager.STATE_WAITING) {
-                    mDM.pause(getData());// 暂停下载
-                } else if (mCurrentState == DownloadManager.STATE_SUCCESS) {
-                    mDM.install(getData());// 开始安装
-                }
-
-                break;
-
-            default:
-                break;
+    @OnClick({R.id.btn_download,R.id.fl_progress})
+    void executeByCurState(){
+        if (mCurrentState == DownloadManager.STATE_NONE
+                || mCurrentState == DownloadManager.STATE_ERROR
+                || mCurrentState == DownloadManager.STATE_PAUSE) {
+            mDM.download(getData());// 开始下载
+        } else if (mCurrentState == DownloadManager.STATE_DOWNLOAD
+                || mCurrentState == DownloadManager.STATE_WAITING) {
+            mDM.pause(getData());// 暂停下载
+        } else if (mCurrentState == DownloadManager.STATE_SUCCESS) {
+            mDM.install(getData());// 开始安装
         }
     }
+    private boolean isCurAppData(String id){
+        if(getData().getAppId().equals(id)){
+            return true;
+        }
+        return false;
+    }
+
 
 }
