@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
 
 import com.shuao.banzhuan.R;
 import com.shuao.banzhuan.data.Config;
@@ -18,6 +19,7 @@ import com.shuao.banzhuan.holder.DetailScreenHolder;
 import com.shuao.banzhuan.model.AppInfo;
 import com.shuao.banzhuan.protocol.DetailProtocol;
 import com.shuao.banzhuan.tools.UiTools;
+import com.shuao.banzhuan.tools.ViewUtils;
 import com.shuao.banzhuan.view.LoadingPage;
 
 
@@ -27,9 +29,10 @@ import com.shuao.banzhuan.view.LoadingPage;
 public class DetailActivity extends BaseActivity {
 
     private LoadingPage mLoadingPage;
+    private LinearLayout ll_aty_detail;
     private Toolbar toolbar;
     private String packageName;
-    private AppInfo data;
+    private AppInfo appInfo;
     private HorizontalScrollView detail_screen;
     private DetailInfoHolder detailInfoHolder;
     private DetailScreenHolder screenHolder;
@@ -37,7 +40,8 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        appInfo = (AppInfo) getIntent().getSerializableExtra("appInfo");
+        packageName = appInfo.getPackageName();
         mLoadingPage = new LoadingPage(this) {
 
             @Override
@@ -54,8 +58,6 @@ public class DetailActivity extends BaseActivity {
 
         setContentView(mLoadingPage);// 直接将一个view对象设置给activity
 
-        // 获取从HomeFragment传递过来的包名
-        packageName = getIntent().getStringExtra("taskID");
 
         // 开始加载网络数据
         mLoadingPage.changeState();
@@ -64,8 +66,10 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-//        setContentView(R.layout.activity_detail);
-//        toolbar = (Toolbar) findViewById(R.id.tl_detail);
+
+
+
+
     }
 
     @Override
@@ -81,23 +85,30 @@ public class DetailActivity extends BaseActivity {
     }
 
     public View onCreateSuccessView() {
+        setContentView(R.layout.activity_detail);
+        ll_aty_detail = (LinearLayout) findViewById(R.id.ll_aty_detail);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tl_detail);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
         // 初始化成功的布局
-        View view = UiTools.inflate(R.layout.activity_detail);
+//        View view = UiTools.inflate(R.layout.activity_detail);
+//        View view = View.inflate(this,R.id.ll_aty_detail,null);
 
-//        ViewUtils.removeParent(view);
-//        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.ll_aty_detail);
 
 
         //  初始化应用信息模块，动态增加布局的内容
-        detail_info = (FrameLayout) view.findViewById(R.id.fl_detail_appinfo);
+        detail_info = (FrameLayout) ll_aty_detail.findViewById(R.id.fl_detail_appinfo);
         // new 会调用initView方法
         detailInfoHolder = new DetailInfoHolder();
         // 设置数据,会调用refreshView方法
-        detailInfoHolder.setData(data);
+        detailInfoHolder.setData(appInfo);
         detail_info.addView(detailInfoHolder.getContentView());
 
         // 初始化应用信息模块
-        FrameLayout flDetailAppInfo = (FrameLayout) view
+        FrameLayout flDetailAppInfo = (FrameLayout) ll_aty_detail
                 .findViewById(R.id.fl_detail_appinfo);
         // 动态给帧布局填充页面
 //        DetailAppInfoHolder appInfoHolder = new DetailAppInfoHolder();
@@ -112,39 +123,41 @@ public class DetailActivity extends BaseActivity {
 //        safeHolder.setData(data);
 //
         // 初始化截图模块
-        HorizontalScrollView hsvPic = (HorizontalScrollView) view
+        HorizontalScrollView hsvPic = (HorizontalScrollView) ll_aty_detail
                 .findViewById(R.id.hsv_detail_pics);
         DetailScreenHolder picsHolder = new DetailScreenHolder();
         hsvPic.addView(picsHolder.getContentView());
-        picsHolder.setData(data);
+        picsHolder.setData(appInfo);
 //
 //        // 初始化描述模块
-        FrameLayout flDetailDes = (FrameLayout) view
+        FrameLayout flDetailDes = (FrameLayout) ll_aty_detail
                 .findViewById(R.id.fl_detail_des);
 //        DetailDesHolder desHolder = new DetailDesHolder();
 //        flDetailDes.addView(desHolder.getRootView());
-//        desHolder.setData(data);
+//        desHolder.setData(appInfo);
 //
 //        // getIntent().getSerializableExtra("list");
 //
 //         初始化下载模块
-        FrameLayout flDetailDownload = (FrameLayout) view
+        FrameLayout flDetailDownload = (FrameLayout) ll_aty_detail
                 .findViewById(R.id.fl_detail_download);
         DetailDownloadHolder downloadHolder = new DetailDownloadHolder();
         flDetailDownload.addView(downloadHolder.getContentView());
 //        Log.d(Config.DEBUG,data.getAppId());
-        if( data != null){
+        if( appInfo != null){
 
-            downloadHolder.setData(data);
+            downloadHolder.setData(appInfo);
         }
-        return view;
+        // 这里必须要return null，防止布局之间的重叠
+        return null;
     }
 
     public LoadingPage.LoadResult onLoad() {
         // 请求网络,加载数据
         DetailProtocol protocol = new DetailProtocol(packageName);
-        data = protocol.load(0);
-        if (data != null) {
+        appInfo = protocol.load(0);
+        // 根据加载数据的结果
+        if (appInfo != null) {
             return  LoadingPage.LoadResult.success;
         } else {
             return  LoadingPage.LoadResult.error;
@@ -153,11 +166,11 @@ public class DetailActivity extends BaseActivity {
 
     @Override
     protected void initToolbar() {
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.tl_detail);
-//        setSupportActionBar(toolbar);
-//        ActionBar actionBar = getSupportActionBar();
-//        if(actionBar != null){
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tl_detail);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 }
