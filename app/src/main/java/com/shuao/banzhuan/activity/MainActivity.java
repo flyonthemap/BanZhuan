@@ -2,20 +2,14 @@ package com.shuao.banzhuan.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,78 +17,92 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shuao.banzhuan.R;
+import com.shuao.banzhuan.adapter.MainAdapter;
 import com.shuao.banzhuan.data.Config;
 import com.shuao.banzhuan.fragment.FragmentFactory;
-import com.shuao.banzhuan.tools.BaseApplication;
 import com.shuao.banzhuan.tools.OKClientManager;
-import com.shuao.banzhuan.tools.PicassoUtils;
 import com.shuao.banzhuan.tools.UiTools;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class MainActivity extends BaseActivity implements DrawerLayout.DrawerListener {
+public class MainActivity extends BaseActivity {
 
-    private DrawerLayout mDrawerLayout;
-    private NavigationView navigationView;
-    //    Tab标签的名字
-    private String[] tabNames;
+    private static final String BANZHUAN = "banzhuan";
+    @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
+    @BindView(R.id.nav_view) NavigationView navigationView;
+    @BindView(R.id.viewpager) ViewPager viewPager;
+    @BindView(R.id.tabs) TabLayout tabLayout;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
+    private CircleImageView circlePortrait;
+    private TextView tvIncome, tvNickName;
+
+
     private long mExitTime;
     private SharedPreferences sharedPreferences;
-    // 侧滑头像
-    private CircleImageView circlePortrait;
-    private TextView tv_income, tv_nickname;
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
-    private Toolbar toolbar;
 
-    //  初始化出界面中的控件
     @Override
     protected void initView() {
         //setContentView方法要在最前面调用才能避免空指针异常。
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        // 设置左上角的点击事件
-        if(mDrawerLayout != null)
-            mDrawerLayout.addDrawerListener(this);
-        // 设置侧滑导航栏
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {}
 
-        if (navigationView != null) {
-            setupDrawerContent(navigationView);
-        }
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        if (viewPager != null) {
-            viewPager.setAdapter(new MainAdapter(getSupportFragmentManager()));
-        }
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                final View header = navigationView.getHeaderView(0);
+                // 当点击用户头像的时候，进入个人信息界面
+                circlePortrait = (CircleImageView) header.findViewById(R.id.big_iv_portrait);
+                tvIncome = (TextView) header.findViewById(R.id.tv_income);
+                tvNickName = (TextView) header.findViewById(R.id.tv_nickname);
+                getNavigationInfo();
+                circlePortrait.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        switch (v.getId()) {
+                            case R.id.big_iv_portrait:
+                                Intent launchPersonalInfo = new Intent(MainActivity.this, PersonalInfoActivity.class);
+                                startActivity(launchPersonalInfo);
+                                mDrawerLayout.closeDrawer(GravityCompat.START);
+                                break;
+                        }
+                    }
+                });
+            }
 
+            @Override
+            public void onDrawerClosed(View drawerView) {}
 
-        // 对Tab标签的时间进行设置
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
-        if(tabLayout != null)
-            tabLayout.setupWithViewPager(viewPager);
-        if(viewPager!=null) {
-            viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageSelected(int position) {
-                    //选中不同的tab标签的时候，切换不同的Activity
-                    FragmentFactory.createFragment(position).changeState();
-                }
-            });
-        }
+            @Override
+            public void onDrawerStateChanged(int newState) {}
+        });
+        setupDrawerContent(navigationView);
+
+        viewPager.setAdapter(new MainAdapter(getSupportFragmentManager()));
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                //选中不同的tab标签的时候，切换不同的Fragment
+                FragmentFactory.createFragment(position).changeState();
+            }
+        });
 
     }
 
 
     @Override
     protected void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         final ActionBar ab = getSupportActionBar();
         if (ab != null) {
             // 设置首页的标签
@@ -108,75 +116,9 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
 
     @Override
     protected void init() {
-        tabNames = UiTools.getStringArray(R.array.tab_names);
-        sharedPreferences = getSharedPreferences("banzhuan", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(BANZHUAN, MODE_PRIVATE);
     }
 
-
-
-    @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {
-
-    }
-
-    @Override
-    public void onDrawerOpened(View drawerView) {
-        // drawer中的内容，必须在onDrawerOpened中加载
-        // 加载Header中的内容
-        final View header = navigationView.getHeaderView(0);
-        // 当点击用户头像的时候，进入个人信息界面
-        circlePortrait = (CircleImageView) header.findViewById(R.id.big_iv_portrait);
-        tv_income = (TextView) header.findViewById(R.id.tv_income);
-        tv_nickname = (TextView) header.findViewById(R.id.tv_nickname);
-        getNavigationInfo();
-        circlePortrait.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.big_iv_portrait:
-                        Intent launchPersonalInfo = new Intent(MainActivity.this, PersonalInfoActivity.class);
-                        startActivity(launchPersonalInfo);
-                        mDrawerLayout.closeDrawer(GravityCompat.START);
-                        break;
-
-                }
-            }
-        });
-    }
-
-    @Override
-    public void onDrawerClosed(View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
-    }
-
-
-    private class MainAdapter extends FragmentStatePagerAdapter {
-        public MainAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        //  创建Fragment使用的是工厂设计模式
-        @Override
-        public Fragment getItem(int position) {
-            return FragmentFactory.createFragment(position);
-        }
-
-        @Override
-        public int getCount() {
-            return tabNames.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabNames[position];
-        }
-
-    }
 
     // 设置两次点击back按钮的事件
     @Override
@@ -193,6 +135,8 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
         }
     }
 
+
+    // 设置菜单项
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tb_menu, menu);
@@ -262,18 +206,18 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
 
         if(Config.nickName == null || Config.income == 0){
             //从服务器加载数据
-            
+
         }else {
             Config.nickName = sharedPreferences.getString(Config.STR_NICKNAME, null);
             Config.income = sharedPreferences.getLong(Config.STR_INCOME,0);
         }
-        if (tv_nickname != null) {
-            tv_nickname.setText("");
-            tv_nickname.setText(Config.nickName);
+        if (tvNickName != null) {
+            tvNickName.setText("");
+            tvNickName.setText(Config.nickName);
         }
-        if(tv_income != null){
-            tv_income.setText("");
-            tv_income.setText(Config.income+"万");
+        if(tvIncome != null){
+            tvIncome.setText("");
+            tvIncome.setText(Config.income+"万");
         }
 
         // 加载头像，首先检查之前有没有缓存过本地文件
@@ -315,8 +259,6 @@ public class MainActivity extends BaseActivity implements DrawerLayout.DrawerLis
         }
 
     }
-    public Toolbar getToolbar(){
-        return toolbar;
-    }
+
 
 }

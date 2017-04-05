@@ -27,17 +27,29 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 
 /**
  * Created by flyonthemap on 16/8/4.
  * Android 登录类的实现
  */
-public class LoginActivity extends BaseActivity implements View.OnClickListener {
-    private EditText et_account,et_pass; // 账号密码
-    private Button btn_login,btn_register; // 登录注册button
-    private Button bt_username_clear;
-    private Button bt_pwd_clear;
-    private Button bt_pwd_eye;
+public class LoginActivity extends BaseActivity {
+    @BindView(R.id.et_username) EditText etUserName;
+    @BindView(R.id.et_password) EditText etPassword;
+    @BindView(R.id.btn_login) Button btnLogin;
+    @BindView(R.id.btn_register) Button btnRegister; // 登录注册button
+    @BindView(R.id.btn_username_clear) Button btnUsernameClear;
+    @BindView(R.id.btn_pwd_clear) Button btnPwdClear;
+    @BindView(R.id.btn_pwd_eye) Button btnPwdEye;
+
+    public static final int LOGIN_SUCCESS = 2000;
+    public static final int LOGIN_ERROR = 2001;
+    public static final int LOGIN_PHONE_UNREGISTER = 2002;
+    public static final String IS_LOGIN = "isLogin";
+
     private TextWatcher username_watcher;
     private TextWatcher password_watcher;
     private LoadingDialog loadingDialog;
@@ -51,7 +63,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     loadingDialog.dismiss();
                     // 保存用户的登录状态，确保Activity启动时候的初始界面
                     Toast.makeText(UiTools.getContext(),getString(R.string.login_success),Toast.LENGTH_SHORT).show();
-                    SPUtils.put(UiTools.getContext(),Config.IS_LOGIN,true);
+//                    SPUtils.put(UiTools.getContext(),IS_LOGIN,true);
                     Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish();
@@ -62,7 +74,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                     Toast.makeText(UiTools.getContext(),getString(R.string.account_or_password_is_error),Toast.LENGTH_SHORT).show();
                     break;
                 // 手机号为注册
-                case Config.LOGIN_PHONE_UNREGISTER:
+                case LOGIN_PHONE_UNREGISTER:
                     Toast.makeText(UiTools.getContext(),getString(R.string.phone_has_no_register),Toast.LENGTH_SHORT).show();
                     loadingDialog.dismiss();
                     break;
@@ -76,30 +88,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             }
         }
     };
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+  
     @Override
     protected void initView() {
         setContentView(R.layout.activity_login);
-        et_account= (EditText) findViewById(R.id.username);
-        et_pass = (EditText) findViewById(R.id.password);
-        bt_username_clear = (Button)findViewById(R.id.bt_username_clear);
-        bt_pwd_clear = (Button)findViewById(R.id.bt_pwd_clear);
-        bt_pwd_eye = (Button)findViewById(R.id.bt_pwd_eye);
-        bt_username_clear.setOnClickListener(this);
-        bt_pwd_clear.setOnClickListener(this);
-        bt_pwd_eye.setOnClickListener(this);
+        ButterKnife.bind(this);
+
         initWatcher();
-        et_account.addTextChangedListener(username_watcher);
-        et_pass.addTextChangedListener(password_watcher);
-
-        btn_login = (Button) findViewById(R.id.login);
-        btn_register = (Button) findViewById(R.id.register);
-
-        btn_login.setOnClickListener(this);
-        btn_register.setOnClickListener(this);
+        etUserName.addTextChangedListener(username_watcher);
+        etPassword.addTextChangedListener(password_watcher);
 
         // 加载对话框的初始化
         loadingDialog = new LoadingDialog(this);
@@ -118,9 +115,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void beforeTextChanged(CharSequence s, int start, int count,int after) {}
             public void afterTextChanged(Editable s) {
                 if(s.toString().length() > 0){
-                    bt_username_clear.setVisibility(View.VISIBLE);
+                    btnUsernameClear.setVisibility(View.VISIBLE);
                 }else{
-                    bt_username_clear.setVisibility(View.INVISIBLE);
+                    btnUsernameClear.setVisibility(View.INVISIBLE);
                 }
             }
         };
@@ -131,55 +128,30 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
             public void afterTextChanged(Editable s) {
                 // 当有字符输入时清除按钮可见
                 if(s.toString().length()>0){
-                    bt_pwd_clear.setVisibility(View.VISIBLE);
+                    btnPwdClear.setVisibility(View.VISIBLE);
                 }else{
-                    bt_pwd_clear.setVisibility(View.INVISIBLE);
+                    btnPwdClear.setVisibility(View.INVISIBLE);
                 }
             }
         };
     }
-
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.login:
-                //向服务器提交登录数据
-                login();
-                break;
-            //一键清除之前的数据
-            case R.id.bt_username_clear:
-                et_account.setText("");
-                break;
-            case R.id.bt_pwd_clear:
-                et_pass.setText("");
-                break;
-            case R.id.bt_pwd_eye:
-                // 密码是否可见的设置
-                if(et_pass.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
-                    bt_pwd_eye.setBackgroundResource(R.drawable.eye_close);
-                    et_pass.setInputType(InputType.TYPE_CLASS_TEXT);
-                }else{
-                    bt_pwd_eye.setBackgroundResource(R.drawable.eye_open);
-                    et_pass.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                }
-                et_pass.setSelection(et_pass.getText().toString().length());
-                break;
-            case R.id.register:
-                Intent launchRegisterActivity  = new Intent(LoginActivity.this,RegisterActivity.class);
-                startActivity(launchRegisterActivity);
-                finish();
-                break;
-        }
+    @OnClick(R.id.btn_pwd_clear)
+    void clearPassword(){
+        etPassword.setText("");
     }
 
-    //  此方法中进行登录逻辑的处理
-    private void login() {
-        String phoneNum = et_account.getText().toString();
-        String password = et_pass.getText().toString();
+    @OnClick(R.id.btn_username_clear)
+    void clearUsername(){
+        etUserName.setText("");
+    }
+
+    @OnClick(R.id.btn_login)
+    void login(){
+        String phoneNum = etUserName.getText().toString();
+        String password = etPassword.getText().toString();
         if(!MatchUtil.isPhoneNum(phoneNum)){
             Toast.makeText(LoginActivity.this, R.string.input_true_phoneNum,Toast.LENGTH_SHORT).show();
-        }else if(et_pass.getText().toString().equals("")){
+        }else if(etPassword.getText().toString().equals("")){
             Toast.makeText(LoginActivity.this, R.string.input_password,Toast.LENGTH_SHORT).show();
         }else{
             // 显示对话框
@@ -198,13 +170,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
                             try {
                                 switch (result.getInt("code")){
                                     case 0:
-                                        handler.sendEmptyMessage(Config.LOGIN_SUCCESS);
+                                        handler.sendEmptyMessage(LOGIN_SUCCESS);
                                         break;
                                     case 1:
-                                        handler.sendEmptyMessage(Config.LOGIN_ERROR);
+                                        handler.sendEmptyMessage(LOGIN_ERROR);
                                         break;
                                     case 2:
-                                        handler.sendEmptyMessage(Config.LOGIN_PHONE_UNREGISTER);
+                                        handler.sendEmptyMessage(LOGIN_PHONE_UNREGISTER);
                                         break;
                                 }
                             } catch (JSONException e) {
@@ -219,5 +191,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         }
     }
 
+    @OnClick(R.id.btn_pwd_eye)
+    void changePwdVisibility(){
+        // 密码是否可见的设置
+        if(etPassword.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
+            btnPwdEye.setBackgroundResource(R.drawable.eye_close);
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT);
+        }else{
+            btnPwdEye.setBackgroundResource(R.drawable.eye_open);
+            etPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+        etPassword.setSelection(etPassword.getText().toString().length());
+    }
+
+    @OnClick(R.id.btn_register)
+    void openRegisterAty(){
+        Intent launchRegisterActivity  = new Intent(LoginActivity.this,RegisterActivity.class);
+        startActivity(launchRegisterActivity);
+        finish();
+    }
 
 }
