@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 凡是以layout开头的属性 其实都是经过父容器批准才能生效  因为在listView 中 layout_height 无论写什么熟悉 都是包裹内容 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="wrap_content"
+    android:id="@+id/fl_task_item"
+    android:orientation="vertical">
     <android.support.v7.widget.Toolbar
-        android:id="@+id/tl_my_task"
+        android:id="@+id/tl_task"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.Toolbar>
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_my_task"
+        android:id="@+id/rl_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     </android.support.v7.widget.RecyclerView>
+
 </LinearLayout>

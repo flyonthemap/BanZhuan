@@ -3,6 +3,8 @@ package com.shuao.banzhuan.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -10,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,20 +23,35 @@ import com.shuao.banzhuan.R;
 import com.shuao.banzhuan.adapter.MainAdapter;
 import com.shuao.banzhuan.data.Config;
 import com.shuao.banzhuan.fragment.FragmentFactory;
+import com.shuao.banzhuan.tools.JSONUtils;
 import com.shuao.banzhuan.tools.OKClientManager;
+import com.shuao.banzhuan.tools.PicassoUtils;
+import com.shuao.banzhuan.tools.SPUtils;
 import com.shuao.banzhuan.tools.UiTools;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.shuao.banzhuan.activity.LoginActivity.LOGIN_PHONE_UNREGISTER;
+
 
 public class MainActivity extends BaseActivity {
 
-    private static final String BANZHUAN = "banzhuan";
+    private static final String PERSON_INFO = "personInfo";
+    private static final String NICKNAME = "nickname";
+    private static final String CUR_INTEGRAL = "curIntegral";
+    private static final int SUCCESS = 0 ;
+    private static final int USER_HAS_NO_LOGIN = 1;
+
     @BindView(R.id.drawer_layout) DrawerLayout mDrawerLayout;
     @BindView(R.id.nav_view) NavigationView navigationView;
     @BindView(R.id.viewpager) ViewPager viewPager;
@@ -42,10 +60,31 @@ public class MainActivity extends BaseActivity {
 
     private CircleImageView circlePortrait;
     private TextView tvIncome, tvNickName;
-
+    private String curIntegral;
+    private String nickname;
+    private String phoneNum;
 
     private long mExitTime;
-    private SharedPreferences sharedPreferences;
+    private OKClientManager okClientManager;
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case SUCCESS:
+                    tvIncome.setText(getString(R.string.cur_integral,curIntegral));
+                    tvNickName.setText(nickname);
+                    break;
+                case USER_HAS_NO_LOGIN:
+                    Intent openLogin = new Intent(MainActivity.this,LoginActivity.class);
+                    startActivity(openLogin);
+                    finish();
+
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void initView() {
@@ -116,7 +155,8 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void init() {
-        sharedPreferences = getSharedPreferences(BANZHUAN, MODE_PRIVATE);
+        okClientManager = OKClientManager.getOkManager();
+        phoneNum = (String) SPUtils.get(UiTools.getContext(),Config.PHONE,"");
     }
 
 
@@ -201,64 +241,40 @@ public class MainActivity extends BaseActivity {
 
     private void getNavigationInfo() {
 
-
         // 加载个人的昵称和总收入
 
-        if(Config.nickName == null || Config.income == 0){
-            //从服务器加载数据
 
-        }else {
-            Config.nickName = sharedPreferences.getString(Config.STR_NICKNAME, null);
-            Config.income = sharedPreferences.getLong(Config.STR_INCOME,0);
-        }
-        if (tvNickName != null) {
-            tvNickName.setText("");
-            tvNickName.setText(Config.nickName);
-        }
-        if(tvIncome != null){
-            tvIncome.setText("");
-            tvIncome.setText(Config.income+"万");
-        }
-
-        // 加载头像，首先检查之前有没有缓存过本地文件
-        Config.PORTRAIT_PATH = sharedPreferences.getString(Config.STR_PORTRAIT_PATH, null);
-        if (Config.PORTRAIT_PATH != null) {
-            File file = new File(Config.PORTRAIT_PATH);
-            // 如果本地文件没有被删除
-            if (file.exists()) {
-                Picasso.with(getApplicationContext()).load(file).into(circlePortrait);
-            } else if (!file.exists()) {
-                // 本地文件被删除则从服务器上加载图片
-                OKClientManager.getOkManager().asyncByURL(Config.DOWNLOAD_PORTRAIT_URL, new OKClientManager.LoadBitmap() {
-                    @Override
-                    public void onResponse(final Bitmap result) {
-                        UiTools.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                circlePortrait.setImageBitmap(result);
-                            }
-                        });
-                    }
-                });
-
-            }
-            // 头像没有在本地缓存过
-        }else{
-            OKClientManager.getOkManager().asyncByURL(Config.DOWNLOAD_PORTRAIT_URL, new OKClientManager.LoadBitmap() {
-                @Override
-                public void onResponse(final Bitmap result) {
-                    if (result != null) ;
-                    UiTools.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            circlePortrait.setImageBitmap(result);
+        Map<String, String> params = new HashMap<>();
+        params.put(Config.PHONE,phoneNum);
+        okClientManager.requestPostBySyn(Config.USER_PERSON_INFO_URI, params, new OKClientManager.LoadJsonString() {
+            @Override
+            public void onResponse(String res) {
+                Log.e(Config.TAG, res);
+                if (res != null) {
+                    JSONObject result = JSONUtils.instanceJsonObject(res);
+                    try {
+                        switch (result.getInt(Config.CODE)) {
+                            case 0:
+                                JSONObject personInfo = result.getJSONObject(PERSON_INFO);
+                                nickname = personInfo.getString(NICKNAME);
+                                curIntegral =  personInfo.getString(CUR_INTEGRAL);
+                                Log.e(Config.TAG,nickname + curIntegral);
+                                handler.sendEmptyMessage(SUCCESS);
+                                break;
+                            case 1:
+                                handler.sendEmptyMessage(USER_HAS_NO_LOGIN);
+                                break;
                         }
-                    });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(Config.TAG,"Json解析异常");
+                    }
+                } else {
+                    handler.sendEmptyMessageDelayed(Config.LOAD_FAIL_FINISH, 3000);
                 }
-            });
-        }
-
+            }
+        });
+        PicassoUtils.loadImageWithHolder(Config.USER_PORTRAIT_URL+"?phoneNum="+phoneNum,R.drawable.ic_default,circlePortrait);
     }
-
 
 }

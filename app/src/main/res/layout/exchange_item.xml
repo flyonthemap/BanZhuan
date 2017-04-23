@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="70dp">
     <LinearLayout
+        android:id="@+id/ll_exchange_item"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/list_item_bg_normal">
+        android:background="@drawable/list_item_bg_pressed">
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ci_exchange"
             android:layout_width="0dp"

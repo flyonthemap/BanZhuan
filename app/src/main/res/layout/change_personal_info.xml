@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:app2="http://schemas.android.com/tools"
     android:orientation="vertical"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <android.support.v7.widget.Toolbar
-        android:id="@+id/tl_register"
+        android:id="@+id/tl_change_personInfo"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
@@ -23,17 +24,18 @@
             android:layout_marginTop="20dp"
             android:layout_width="160dp"
             android:layout_height="160dp"
+            app2:civ_border_color="@color/dark_grey"
             android:src="@drawable/portrait"
             android:layout_gravity="center"/>
         <LinearLayout
             android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="wrap_content">
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/portrait"/>
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/nickname"/>
             <EditText
                 android:id="@+id/et_nickname"
                 android:singleLine="true"
@@ -45,11 +47,11 @@
             android:orientation="horizontal"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
-            android:layout_height="40dp">
+            android:layout_height="wrap_content">
             <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/portrait"/>
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/gender"/>
             <RadioGroup
                 android:layout_marginLeft="10dp"
                 android:layout_width="wrap_content"
@@ -80,12 +82,12 @@
             android:layout_width="match_parent"
             android:layout_marginTop="20dp"
 
-            android:layout_height="40dp">
+            android:layout_height="wrap_content">
             <ImageView
 
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/portrait"/>
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/date"/>
 
             <TextView
                 android:layout_marginLeft="10dp"
@@ -104,7 +106,7 @@
             android:layout_height="@dimen/default_button_height"
             android:layout_below="@id/usercode_layout"
             android:layout_marginTop="30dp"
-            android:background="#ff336699"
+            android:background="#1296db"
             android:textColor="@android:color/white"
             android:gravity="center"
             android:textSize="@dimen/default_text_size"

@@ -32,6 +32,7 @@ public class DownloadManager {
     public static final int STATE_PAUSE = 3;// 下载暂停
     public static final int STATE_ERROR = 4;// 下载失败
     public static final int STATE_SUCCESS = 5;// 下载成功
+    public static final int STATE_INSTALL = 6;
 
     // 所有观察者的集合
     private ArrayList<DownloadObserver> mObservers = new ArrayList<DownloadObserver>();
@@ -128,20 +129,19 @@ public class DownloadManager {
             notifyDownloadStateChanged(downloadInfo);
             File file = new File(downloadInfo.path);
             Log.e(Config.TAG,downloadInfo.path);
+            String downloadURL = HttpHelper.URL
+                    + "/download?name=" + downloadInfo.downloadUrl;
             if (!file.exists() || file.length() != downloadInfo.currentPos
                     || downloadInfo.currentPos == 0) {// 文件不存在, 或者文件长度和对象的长度不一致,
                 // 或者对象当前下载位置是0
                 file.delete();// 移除无效文件
                 downloadInfo.currentPos = 0;// 文件当前位置归零
-                httpResult = HttpHelper.download(HttpHelper.URL
-                        + "download?name=" + downloadInfo.downloadUrl);// 从头开始下载文件
-                String downloadURL = HttpHelper.URL
-                        + "download?name=" + downloadInfo.downloadUrl;
+                httpResult = HttpHelper.download(downloadURL);// 从头开始下载文件
+
 //                Log.d(Config.TAG,downloadURL);
             } else {
                 // 需要断点续传
-                httpResult = HttpHelper.download(HttpHelper.URL
-                        + "download?name=" + downloadInfo.downloadUrl
+                httpResult = HttpHelper.download(downloadURL
                         + "&range=" + file.length());
             }
 
@@ -173,6 +173,7 @@ public class DownloadManager {
                 if (file.length() == downloadInfo.size) {
                     // 下载完毕
                     downloadInfo.currentState = STATE_SUCCESS;
+
                     notifyDownloadStateChanged(downloadInfo);
                 } else if (downloadInfo.currentState == STATE_PAUSE) {
                     // 中途暂停
@@ -236,6 +237,9 @@ public class DownloadManager {
             intent.setDataAndType(Uri.parse("file://" + downloadInfo.path),
                     "application/vnd.android.package-archive");
             UiTools.getContext().startActivity(intent);
+            Log.e(Config.TAG,appInfo.getPackageName() + "正在被安装");
+            TaskManager.getInstance().recordApp(downloadInfo.packageName,Config.DOWNLOAD_SUCCESS);
+
         }
     }
 

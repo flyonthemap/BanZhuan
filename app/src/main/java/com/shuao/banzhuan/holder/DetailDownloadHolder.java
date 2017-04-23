@@ -102,8 +102,6 @@ public class DetailDownloadHolder extends BaseHolder<AppInfo> implements
                 btnDownload.setVisibility(View.GONE);
                 pbProgress.setCenterText("暂停");
                 pbProgress.setProgress(mProgress);
-
-                System.out.println("暂停界面更新:" + mCurrentState);
                 break;
 
             case DownloadManager.STATE_ERROR:// 下载失败

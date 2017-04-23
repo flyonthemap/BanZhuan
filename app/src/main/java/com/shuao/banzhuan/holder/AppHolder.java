@@ -2,6 +2,7 @@ package com.shuao.banzhuan.holder;
 
 import android.content.Intent;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -37,6 +38,7 @@ public class AppHolder extends BaseRecyclerHolder<AppInfo> implements DownloadMa
     @BindView(R.id.tv_download) TextView tvDownload;
     @BindView(R.id.fl_action_progress) FrameLayout flDownload;
     @BindView(R.id.item_action) RelativeLayout rlItemAction;
+    @BindView(R.id.fl_app_item) FrameLayout rlAppItem;
 
     private ProgressArc pbProgress;
     private DownloadManager mDM;
@@ -131,9 +133,7 @@ public class AppHolder extends BaseRecyclerHolder<AppInfo> implements DownloadMa
 
     // 更新当前任务的下载状态和进度
     private void refreshProgressUI(int state, float progress, String id) {
-        if (!isCurrentAppData(id)){
-            return;
-        }else {
+        if (isCurrentAppData(id) || state == DownloadManager.STATE_INSTALL){
             mCurrentState = state;
             mProgress = progress;
             switch (state) {
@@ -171,7 +171,12 @@ public class AppHolder extends BaseRecyclerHolder<AppInfo> implements DownloadMa
                     pbProgress.setStyle(ProgressArc.PROGRESS_STYLE_NO_PROGRESS);
                     tvDownload.setText("安装");
                     break;
-
+                case DownloadManager.STATE_INSTALL:
+                    Log.e(Config.TAG,"这个方法被调用了");
+                    pbProgress.setBackgroundResource(R.drawable.install);
+                    pbProgress.setStyle(ProgressArc.PROGRESS_STYLE_NO_PROGRESS);
+                    tvDownload.setText("已安装");
+                    rlAppItem.setClickable(false);
                 default:
                     break;
             }
@@ -182,15 +187,13 @@ public class AppHolder extends BaseRecyclerHolder<AppInfo> implements DownloadMa
 
 
     private void refreshProgressUIOnMainThread(final DownloadInfo info) {
-        // 判断下载对象是否是当前应用
-        if (isCurrentAppData(info.id)) {
-            UiTools.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    refreshProgressUI(info.currentState, info.getProgress(), info.id);
-                }
-            });
-        }
+
+        UiTools.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                refreshProgressUI(info.currentState, info.getProgress(), info.id);
+            }
+        });
     }
 
 

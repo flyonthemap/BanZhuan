@@ -3,6 +3,7 @@ package com.shuao.banzhuan.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -22,67 +24,98 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.shuao.banzhuan.R;
 import com.shuao.banzhuan.data.Config;
 import com.shuao.banzhuan.tools.JSONUtils;
 import com.shuao.banzhuan.tools.MatchUtil;
 import com.shuao.banzhuan.tools.OKClientManager;
+import com.shuao.banzhuan.tools.UiTools;
 import com.shuao.banzhuan.view.LoadingDialog;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
  * Created by flyonthemap on 16/8/4.
  *  用户注册模块
  */
-public class RegisterActivity extends BaseActivity implements View.OnClickListener {
-    private LinearLayout llStepNavigate;// 页面第一第二步的导航条
-    private TextView tvStep1;
-    private TextView tvStep2;
-    private ViewFlipper vfRegister;// 页面切换的容器
+public class RegisterActivity extends BaseActivity{
+
+    public static final int GET_CODE_PHONE_EXIST = 1003; // 手机号已经注册
+    public static final int CODE_CONFIRM_FAIL = 1004;   //验证码验证失败
+    public static final int GET_CODE_SUCCESS = 1005; //获取验证码成功
+    public static final int CODE_CONFIRM_SUCCESS = 1006;   //验证码验证失败
+    public static final int REGISTER_SUCCESS = 1007;       // 注册成功
+    public static final int REGISTER_FAIL = 1008;       // 注册失败
+    public static final String AUTH_CODE = "authCode"; // 验证码验证的表单参数
+    public static final String PHONE = "phoneNum";
+    public static final String CHECK_AUTH_CODE = "checkAuthCode";
+    public final static String PASSWORD = "password";
+    public static final String USER_NAME = "nickname";
+    private static final java.lang.String TIME = "time";
+    private static final int GET_PHOTO_STATE = 100;
+
+    // 注册顶部界面
+    @BindView(R.id.ll_step_navigate) LinearLayout llStepNavigate;
+    @BindView(R.id.tv_step1) TextView tvStep1;
+    @BindView(R.id.tv_step2) TextView tvStep2;
+    @BindView(R.id.vfl_register) ViewFlipper vfRegister;// 页面切换的容器
     private int viewIndex = Toast.LENGTH_SHORT;// 初始化当前页排位
 
     private LoadingDialog loadingDialog ;// 网络访问提示对话框
-    private String url;   // 网络访问url
+    private LoadingDialog registerDialog;
     // step1界面元素
-    private EditText etPhoneNum;// 电话号码输入框
-    private String phone;
-    private Button btGetCode;// 获取验证码按钮;
-    private EditText etCheckCode;// 验证码输入框
-    private Button btNextStep;// 下一步按钮
-    private CheckBox cbAccepted;// 同意复选框
-    private TextView tvProtocolOfOrong;// 服务条款标题
+    @BindView(R.id.et_phonenum) EditText etPhoneNum;// 电话号码输入框
+    @BindView(R.id.bt_get_checkCode) Button btGetCode;// 获取验证码按钮;
+    @BindView(R.id.et_checkcode) EditText etCheckCode;// 验证码输入框
+    @BindView(R.id.bt_next_step) Button btNextStep;// 下一步按钮
+    @BindView(R.id.cb_accepted) CheckBox cbAccepted;// 同意复选框
+    @BindView(R.id.tv_protocol_of_orong) TextView tvProtocolOfOrong;// 服务条款标题
 
+    private String phone;
     // step2的界面元素
-    private EditText etUserName;// 电话或用户名
-    private EditText etPassWord;// 登录密码
-    private EditText etConfirmPassWord;// 确认密码密码
-    private Button btRegister;// 注册
-    private TextView tvConfirmPassword;
+    @BindView(R.id.ll_step2_main) LinearLayout linearLayout;
+    @BindView(R.id.et_nickname) EditText etUserName;// 电话或用户名
+    @BindView(R.id.et_login_paw) EditText etPassWord;// 登录密码
+    @BindView(R.id.et_confirm_paw) EditText etConfirmPassWord;// 确认密码密码
+    @BindView(R.id.bt_register) Button btRegister;// 注册
+    @BindView(R.id.tv_password_confirm) TextView tvConfirmPassword;
+    @BindView(R.id.ci_register_portrait) CircleImageView ciPortrait;
+
+
     private int validTime = 30;
     private Runnable timerRunnable;// 定时器
-    private static final int TIMECHANGE = 2000;
-    private LoadingDialog registerDialog;
-    // 定时结束
-    private static final int TIMERCOMPLETE = 3000;
+    private static final int TIME_CHANGE = 2000;
+    private static final int TIMER_COMPLETE = 3000;
     OKClientManager okClientManager;
+    private ImageItem imageItem;
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case TIMECHANGE:
+                case TIME_CHANGE:
                     Bundle data = msg.getData();
-                    int time = data.getInt("time");
-                    btGetCode.setText(time+"s");
+                    int time = data.getInt(TIME);
+                    btGetCode.setText(getString(R.string.remaining_time,time));
                     break;
-                case TIMERCOMPLETE:
+                case TIMER_COMPLETE:
                     btGetCode.setClickable(true);
                     setButtonBackground(btGetCode);
                     btGetCode.setText(R.string.get_verification_code);
@@ -92,7 +125,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     timerRunnable = null;
                     break;
                 // 获取验证码成功
-                case Config.GET_CODE_SUCCESS:
+                case GET_CODE_SUCCESS:
                     //对话框提示
                     loadingDialog.dismissSuc(getString(R.string.send_message));
                     btGetCode.setClickable(false);
@@ -112,21 +145,21 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                             if (validTime > 0) {
                                 validTime--;
                                 Message msg = handler.obtainMessage();
-                                msg.what = TIMECHANGE;
+                                msg.what = TIME_CHANGE;
                                 Bundle bundle = new Bundle();
                                 bundle.putInt("time", validTime);
                                 msg.setData(bundle);
                                 msg.sendToTarget();
                                 handler.postDelayed(timerRunnable, 1000);
                             } else {
-                                handler.sendEmptyMessage(TIMERCOMPLETE);
+                                handler.sendEmptyMessage(TIMER_COMPLETE);
                             }
                         }
                     };
                     handler.post(timerRunnable);
                     break;
                 // 手机号已被注册
-                case Config.GET_CODE_PHONE_EXIST:
+                case GET_CODE_PHONE_EXIST:
                     loadingDialog.dismissFail(getString(R.string.phone_has_register));
                     break;
                 // 加载时间过程
@@ -134,22 +167,22 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     Toast.makeText(RegisterActivity.this,getString(R.string.check_netword_setting),Toast.LENGTH_SHORT).show();
                     break;
                 // 验证码验证失败
-                case Config.CODE_CONFIRM_FAIL:
+                case CODE_CONFIRM_FAIL:
                     Toast.makeText(RegisterActivity.this,getString(R.string.fail_please_try_later),Toast.LENGTH_SHORT).show();
 
                     break;
                 // 验证码验证成功
-                case Config.CODE_CONFIRM_SUCCESS:
+                case CODE_CONFIRM_SUCCESS:
                     Toast.makeText(RegisterActivity.this,getString(R.string.confirm_success),Toast.LENGTH_SHORT).show();
 
                     llStepNavigate.setBackgroundResource(R.drawable.step2);
-                    tvStep1.setTextColor(getResources().getColor(R.color.white2));
-                    tvStep2.setTextColor(getResources().getColor(R.color.white2));
+                    tvStep1.setTextColor(UiTools.getColor(R.color.white2));
+                    tvStep2.setTextColor(UiTools.getColor(R.color.white2));
                     vfRegister.showNext();
                     viewIndex++;
                     break;
                 // 注册成功
-                case Config.REGISTER_SUCCESS:
+                case REGISTER_SUCCESS:
                     registerDialog.dismissSuc(getString(R.string.register_success_please_login));
                     // 启动登录界面
                     Intent login = new Intent(RegisterActivity.this,LoginActivity.class);
@@ -158,7 +191,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
                     break;
                 // 注册失败
-                case Config.REGISTER_FAIL:
+                case REGISTER_FAIL:
                     registerDialog.dismissSuc(getString(R.string.register_fail_please_try_later));
                     break;
                 default:
@@ -173,21 +206,11 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void initView() {
         setContentView(R.layout.activity_register);
-        llStepNavigate = (LinearLayout) this.findViewById(R.id.ll_step_navigate);
-        tvStep1 = (TextView) this.findViewById(R.id.tv_step1);
-        tvStep2 = (TextView) this.findViewById(R.id.tv_step2);
+        ButterKnife.bind(this);
 
-        vfRegister = (ViewFlipper) this.findViewById(R.id.vfl_register);
         loadingDialog = new LoadingDialog(this);
         registerDialog = new LoadingDialog(this);
-        // step1
-        etPhoneNum = (EditText) this.findViewById(R.id.et_phonenum);
-        btGetCode = (Button) this.findViewById(R.id.bt_get_checkCode);
-        btGetCode.setOnClickListener(this);
-
-        etCheckCode = (EditText) this.findViewById(R.id.et_checkcode);
         // 同意并已经输入验证码才能实行下一步
-        cbAccepted = (CheckBox) this.findViewById(R.id.cb_accepted);
         cbAccepted.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -196,34 +219,36 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 setButtonBackground(btNextStep);
             }
         });
-
-        tvProtocolOfOrong = (TextView) this.findViewById(R.id.tv_protocol_of_orong);
-        tvProtocolOfOrong.setOnClickListener(this);
-
-        btNextStep = (Button) this.findViewById(R.id.bt_next_step);
-        btNextStep.setOnClickListener(this);
         btNextStep.setClickable(false);
         setButtonBackground(btNextStep);
+        confirmPwdConsistency();
 
-        // step2
-        etUserName = (EditText) this.findViewById(R.id.et_nickname);
-        etPassWord = (EditText) this.findViewById(R.id.et_login_paw);
-        tvConfirmPassword = (TextView) this.findViewById(R.id.tv_password_confirm);
-        etConfirmPassWord = (EditText) this.findViewById(R.id.et_confirm_paw);
-        etConfirmPassWord.setOnClickListener(this);
+        // 试图 获取本机电话号码并显示到电话号输入框
+        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String telephone = manager.getLine1Number();
+        if (telephone != null) {
+            if (telephone.startsWith("+86")) {
+                telephone = telephone.substring(3);
+            } else if (telephone.startsWith("86")) {
+                telephone = telephone.substring(2);
+            }
+        }
+        etPhoneNum.setText(telephone);
+        UiTools.addLayoutListener(linearLayout,btRegister);
+
+    }
+
+
+    private void confirmPwdConsistency() {
         etConfirmPassWord.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(!etConfirmPassWord.getText().toString().equals(etPassWord.getText().toString())){
                     tvConfirmPassword.setVisibility(View.VISIBLE);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 if(etConfirmPassWord.getText().toString().equals(etPassWord.getText().toString())){
@@ -255,23 +280,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                 }
             }
         });
-
-
-
-        btRegister = (Button) this.findViewById(R.id.bt_register);
-        btRegister.setOnClickListener(this);
-
-        // 试图 获取本机电话号码并显示到电话号输入框
-        TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String telephone = manager.getLine1Number();
-        if (telephone != null) {
-            if (telephone.startsWith("+86")) {
-                telephone = telephone.substring(3);
-            } else if (telephone.startsWith("86")) {
-                telephone = telephone.substring(2);
-            }
-        }
-        etPhoneNum.setText(telephone);
     }
 
     @Override
@@ -281,7 +289,6 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         ActionBar ab = getSupportActionBar();
         if(ab != null){
             ab.setDisplayHomeAsUpEnabled(true);
-            //
             ab.setHomeButtonEnabled(true);
         }
 
@@ -300,105 +307,19 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             button.setBackgroundResource(R.drawable.unclickble_right_round);
         }
     }
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.bt_get_checkCode:
-                Log.e(Config.TAG,"-->the  check button is clicked.");
-                phone = etPhoneNum.getText().toString();
-                // 获取验证码并进行校验
-                getCaptcha(phone);
-                break;
-            case R.id.bt_next_step:
-                // 点击下一步按钮的时候进行验证码的校验
-                Log.e(Config.TAG,"-->the next step is clicked.");
-                String captcha = etCheckCode.getText().toString();
-                doCheckCaptcha(captcha);
-                break;
-            case R.id.tv_protocol_of_orong:
-//                startActivity(new Intent(this, ProtocolActivity.class));
-                break;
-            case R.id.bt_register:
-                doRegister();
-                break;
-            default:
 
-                break;
-        }
-    }
-    /**
-     * 返回前一页 如果ViewFlipper 的当前页不是第一页退回前一页，否则退出整个页面，
-     */
-    private void reback() {
-        if (viewIndex > Toast.LENGTH_SHORT) {
-            llStepNavigate.setBackgroundResource(R.drawable.step1);
-            tvStep1.setTextColor(getResources().getColor(R.color.white2));
-            tvStep2.setTextColor(getResources().getColor(R.color.textcolor));
-            vfRegister.showPrevious();
-            viewIndex--;
-        } else {
-            finish();
-        }
-
-    }
-    /**
-     * 获取验证码
-     *
-     * @param phone 接收验证码的手机帐号
-     */
-    private void getCaptcha(String phone) {
-        loadingDialog.show();
-        if (MatchUtil.isPhoneNum(phone)) {
-
-            // 利用get方法获取验证码
-            Map<String,String> params = new HashMap<>();
-            params.put(Config.PHONE,phone);
-            okClientManager.requestGetBySyn(Config.GET_CODE_URI,params,new OKClientManager.LoadJsonString() {
-                @Override
-                public void onResponse(String result) {
-                    if(result !=  null){
-                        JSONObject res = JSONUtils.instanceJsonObject(result);
-                        try {
-                            switch (res.getInt(Config.CODE)){
-                                case 0:
-                                    handler.sendEmptyMessage(Config.GET_CODE_SUCCESS);
-                                    break;
-                                case 1:
-                                    handler.sendEmptyMessage(Config.GET_CODE_PHONE_EXIST);
-                                    break;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-
-                    }else {
-                        handler.sendEmptyMessageDelayed(Config.LOAD_FAIL_FINISH, 3000);
-                    }
-                }
-            });
-        }else {
-            if ("".equals(phone)) {
-                Toast.makeText(this, R.string.null_phone, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, R.string.error_phone, Toast.LENGTH_SHORT).show();
-            }
-            btNextStep.setClickable(false);
-            setButtonBackground(btNextStep);
-            return;
-        }
-    }
-    // 进行验证码校验
-    private void doCheckCaptcha(String captcha) {
-        if (captcha == null || "".equals(captcha)) {
+    @OnClick(R.id.bt_next_step)
+    void goNextStep(){
+        String captcha = etCheckCode.getText().toString();
+        if ("".equals(captcha)) {
             Toast.makeText(this, R.string.null_captcha, Toast.LENGTH_SHORT).show();
             return;
         } else {
             // 将验证码数据提交到服务器
             Map<String,String> params = new HashMap<>();
-            params.put(Config.AUTH_CODE,captcha);
-            params.put(Config.PHONE,phone);
-            okClientManager.requestPostBySyn(Config.CHECK_AUTH_CODE,params,new OKClientManager.LoadJsonString() {
+            params.put(AUTH_CODE,captcha);
+            params.put(PHONE,phone);
+            okClientManager.requestPostBySyn(CHECK_AUTH_CODE,params,new OKClientManager.LoadJsonString() {
                 @Override
                 public void onResponse(String result) {
                     if(result != null){
@@ -407,10 +328,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                         try {
                             switch (res.getInt("code")){
                                 case 0:
-                                    handler.sendEmptyMessage(Config.CODE_CONFIRM_SUCCESS);
+                                    handler.sendEmptyMessage(CODE_CONFIRM_SUCCESS);
                                     break;
                                 case 1:
-                                    handler.sendEmptyMessage(Config.CODE_CONFIRM_FAIL);
+                                    handler.sendEmptyMessage(CODE_CONFIRM_FAIL);
                                     Log.e(Config.TAG,"--->code confirm fail..");
                                     break;
                             }
@@ -426,13 +347,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             });
         }
     }
-
-    /**
-     * 注册并登录
-     */
-    private void doRegister() {
-        // 验证用户名
+    @OnClick(R.id.bt_register)
+    void register() {
         String username = etUserName.getText().toString().trim();
+        // 验证用户名
         if (!MatchUtil.isLicitAccount(username)) {
             if ("".equals(username)) {
                 Toast.makeText(this, R.string.null_account, Toast.LENGTH_SHORT).show();
@@ -462,28 +380,86 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         }
 
         // 没有密码不一致提示信息就可以请求注册
-        if(tvConfirmPassword.getVisibility() == tvConfirmPassword.INVISIBLE)
-            requestRegister(phone, username, loginPasWord);
+        if (tvConfirmPassword.getVisibility() == tvConfirmPassword.INVISIBLE) {
+            if (imageItem == null) {
+                Toast.makeText(this, R.string.please_upload_portrait, Toast.LENGTH_SHORT).show();
+            }
+            else{
+                requestRegister(phone, username, loginPasWord);
+            }
+
+        }
+    }
+
+    @OnClick(R.id.bt_get_checkCode)
+    void getCheckCode(){
+        phone = etPhoneNum.getText().toString();
+        // 获取验证码并进行校验
+        if (MatchUtil.isPhoneNum(phone)) {
+            loadingDialog.show();
+            // 利用get方法获取验证码
+            Map<String,String> params = new HashMap<>();
+            params.put(PHONE,phone);
+            okClientManager.requestGetBySyn(Config.GET_CODE_URI,params,new OKClientManager.LoadJsonString() {
+                @Override
+                public void onResponse(String result) {
+                    if(result !=  null){
+                        JSONObject res = JSONUtils.instanceJsonObject(result);
+                        try {
+                            switch (res.getInt(Config.CODE)){
+                                case 0:
+                                    handler.sendEmptyMessage(GET_CODE_SUCCESS);
+                                    break;
+                                case 1:
+                                    handler.sendEmptyMessage(GET_CODE_PHONE_EXIST);
+                                    break;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }else {
+                        handler.sendEmptyMessageDelayed(Config.LOAD_FAIL_FINISH, 3000);
+                    }
+                }
+            });
+        }else {
+            if ("".equals(phone)) {
+                Toast.makeText(this, R.string.null_phone, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, R.string.error_phone, Toast.LENGTH_SHORT).show();
+            }
+            btNextStep.setClickable(false);
+            setButtonBackground(btNextStep);
+            return;
+        }
+    }
+    /**
+     * 返回前一页 如果ViewFlipper 的当前页不是第一页退回前一页，否则退出整个页面，
+     */
+    private void reback() {
+        if (viewIndex > Toast.LENGTH_SHORT) {
+            llStepNavigate.setBackgroundResource(R.drawable.step1);
+            tvStep1.setTextColor(UiTools.getColor(R.color.white2));
+            tvStep2.setTextColor(UiTools.getColor(R.color.textcolor));
+            vfRegister.showPrevious();
+            viewIndex--;
+        } else {
+            finish();
+        }
 
     }
 
-    /**
-     * 注册登录请求
-     *
-     * @param phone
-     *            注册手机
-     * @param username
-     *            注册帐号
-     * @param loginPassword
-     *            登录密码
-     */
     private void requestRegister(String phone, String username, String loginPassword) {
-        Map<String,String> datas = new HashMap<>();
-        datas.put(Config.PHONE, phone);
-        datas.put(Config.USER_NAME,username);
-        datas.put(Config.PASSWORD, loginPassword);
+        Map<String,String> data = new HashMap<>();
+        data.put(PHONE, phone);
+        data.put(USER_NAME,username);
+        data.put(PASSWORD, loginPassword);
         registerDialog.show();
-        okClientManager.requestPostBySyn(Config.REGISTER_URI, datas, new OKClientManager.LoadJsonString() {
+        Map<String,String> paths = new HashMap<>();
+        paths.put(phone,imageItem.path);
+        okClientManager.postByMultipart(Config.REGISTER_URI, data,paths, new OKClientManager.LoadJsonString() {
             @Override
             public void onResponse(String result) {
                 if(result != null){
@@ -492,10 +468,10 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
                     try {
                         switch (res.getInt("code")){
                             case 0:
-                                handler.sendEmptyMessage(Config.REGISTER_SUCCESS);
+                                handler.sendEmptyMessage(REGISTER_SUCCESS);
                                 break;
                             case 1:
-                                handler.sendEmptyMessage(Config.REGISTER_FAIL);
+                                handler.sendEmptyMessage(REGISTER_FAIL);
                                 Log.e(Config.TAG,"--->code confirm fail..");
                                 break;
                         }
@@ -519,8 +495,25 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(Config.TAG,"-->destory");
         if(registerDialog != null)
             registerDialog.dismiss();
+    }
+    @OnClick(R.id.ci_register_portrait)
+    void selectPortrait(){
+        Intent intent = new Intent(getApplicationContext(), ImageGridActivity.class);
+        startActivityForResult(intent, GET_PHOTO_STATE);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == GET_PHOTO_STATE) {
+                ArrayList<ImageItem> photoInfo = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                imageItem = photoInfo.get(0);
+                Picasso.with(getApplicationContext()).load(new File(imageItem.path)).into(ciPortrait);
+            } else {
+                Toast.makeText(getApplicationContext(), "没有数据", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

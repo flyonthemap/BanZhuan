@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import com.shuao.banzhuan.R;
 import com.shuao.banzhuan.adapter.BaseAdapter;
-import com.shuao.banzhuan.adapter.OnRecyclerViewItemClickListener;
 
 /**
  * Created by flyonthemap on 2017/3/21.
@@ -19,17 +18,12 @@ public class LoadMoreAdapterWrapper<T> extends BaseAdapter<T>  {
     private BaseAdapter mAdapter;
     private boolean hasMoreData = true;
     private OnLoad mOnLoad;
-    private OnRecyclerViewItemClickListener listener;
 
     public LoadMoreAdapterWrapper(BaseAdapter adapter) {
         mAdapter = adapter;
     }
     public  void setOnLoad(OnLoad load){
         this.mOnLoad = load;
-    }
-    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener)
-    {
-        this.listener = listener;
     }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

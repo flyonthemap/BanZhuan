@@ -7,19 +7,19 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/tl_setting"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:layout_scrollFlags="scroll|enterAlways|snap" />
+        android:layout_height="?attr/actionBarSize" />
     <Button
         android:id="@+id/btn_logout"
+        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/list_item_bg_normal"
         android:text="退出登录"/>
     <Button
         android:id="@+id/btn_change_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/blue_button_background_selector"
+        android:layout_marginTop="10dp"
         android:text="修改密码"/>
 </LinearLayout>

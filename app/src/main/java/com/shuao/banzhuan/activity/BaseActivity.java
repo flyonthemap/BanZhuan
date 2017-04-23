@@ -1,7 +1,10 @@
 package com.shuao.banzhuan.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.shuao.banzhuan.R;
+import com.shuao.banzhuan.tools.LogUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -87,4 +91,6 @@ public class BaseActivity extends AppCompatActivity {
     // 初始化和View不相关的资源文件
     protected void init() {
     }
+
+
 }

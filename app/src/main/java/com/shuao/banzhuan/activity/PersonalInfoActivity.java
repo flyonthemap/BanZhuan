@@ -1,6 +1,7 @@
 package com.shuao.banzhuan.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -16,6 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baoyz.actionsheet.ActionSheet;
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -26,13 +30,23 @@ import com.shuao.banzhuan.fragment.DatePickerFragment;
 import com.shuao.banzhuan.tools.BaseApplication;
 import com.shuao.banzhuan.tools.OKClientManager;
 import com.shuao.banzhuan.tools.PicassoUtils;
+import com.shuao.banzhuan.tools.SPUtils;
 import com.shuao.banzhuan.tools.UiTools;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
-import java.util.Calendar;
-import java.util.List;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.finalteam.galleryfinal.FunctionConfig;
 import cn.finalteam.galleryfinal.GalleryFinal;
 import cn.finalteam.galleryfinal.model.PhotoInfo;
@@ -42,214 +56,180 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by flyonthemap on 16/8/4.
  * 个人信息修改界面的实现
  */
-public class PersonalInfoActivity extends BaseActivity implements View.OnClickListener {
+public class PersonalInfoActivity extends BaseActivity {
 
-    private TextView  tv_date;
-    private RadioButton rb_man,rb_women;
-    private SharedPreferences sharedPreferences;
-    private Button btn_save;
-    private EditText et_nickname;
-    private CircleImageView portrait;
-    private SharedPreferences.Editor editor;
+    @BindView(R.id.tv_date)
+    TextView  tvDate;
+    @BindView(R.id.rb_man)
+    RadioButton rbMan;
+    @BindView(R.id.rb_women)
+    RadioButton rbWomen;
+    @BindView(R.id.et_nickname)
+    EditText etNickname;
+    @BindView(R.id.btn_save)
+    Button btnSave;
+    @BindView(R.id.ci_portrait)
+    CircleImageView portrait;
+    ImageItem imageItem;
 
-    private final int REQUEST_CODE_CAMERA = 1000;
-    private final int REQUEST_CODE_GALLERY = 1001;
-    private GalleryFinal.OnHanlderResultCallback mOnHandlerResultCallback = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int requestCode, List<PhotoInfo> resultList) {
-            if (resultList != null) {
-                PhotoInfo photoInfo = resultList.get(0);
-                Picasso.with(getApplicationContext()).load(new File(photoInfo.getPhotoPath())).into(portrait);
-                //将图片保存至本地
-                String[] paths = photoInfo.getPhotoPath().split("/");
-                Config.PORTRAIT_PATH = UiTools.getContext().getCacheDir() + File.separator + paths[paths.length-1];
-                PicassoUtils.saveLocalByPath(photoInfo.getPhotoPath(),Config.PORTRAIT_PATH);
-            }
-        }
+    private final int GET_PHOTO_STATE = 1000;
+    private boolean isMan  = false;
+    private OKClientManager okClientManager;
+    private String phoneNum;
+    private static final String GENDER = "gender";
+    private static final String NICKNAME = "nickname";
+    private static final String BIRTHDAY = "birthday";
 
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-            Toast.makeText(PersonalInfoActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-        }
-    };
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     protected void init() {
-        sharedPreferences = getSharedPreferences("banzhuan",MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-
+        okClientManager = OKClientManager.getOkManager();
+        phoneNum = (String) SPUtils.get(UiTools.getContext(),Config.PHONE,"");
     }
+
 
     @Override
     protected void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tl_register);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tl_change_personInfo);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if(ab != null)
             ab.setDisplayHomeAsUpEnabled(true);
     }
 
+
     @Override
     protected void initView() {
         setContentView(R.layout.change_personal_info);
-        tv_date = (TextView) findViewById(R.id.tv_date);
-        btn_save = (Button) findViewById(R.id.btn_save);
-        et_nickname = (EditText) findViewById(R.id.et_nickname);
-        rb_man = (RadioButton) findViewById(R.id.rb_man);
-        rb_women = (RadioButton) findViewById(R.id.rb_women);
-        portrait = (CircleImageView) findViewById(R.id.ci_portrait);
-
-        // 首先加载之前存储过的本地信息
-        getDefaultInfo();
-
-        portrait.setOnClickListener(this);
+        ButterKnife.bind(this);
         // 监听RatioButton的状态变化
 
-        rb_man.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        rbMan.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    editor.putBoolean(Config.STR_IS_MAN,true);
+                    isMan = true;
                 }else {
-                    editor.putBoolean(Config.STR_IS_MAN,false);
+                    isMan = false;
                 }
             }
         });
-
-        // 修改生日
-        View ll_change_birthday = findViewById(R.id.ll_change_birthday);
-        if(ll_change_birthday != null)
-            ll_change_birthday.setOnClickListener(this);
-        btn_save.setOnClickListener(this);
+        Map<String,String> params = new HashMap<>();
+        params.put(Config.PHONE,phoneNum);
+        okClientManager.requestPostBySyn(Config.USER_PERSON_INFO_URI, params, new OKClientManager.LoadJsonString() {
+            @Override
+            public void onResponse(String result) {
+                try {
+                    Log.e(Config.TAG,result);
+                    JSONObject json = new JSONObject(result);
+                    JSONObject jsonObject = json.getJSONObject("personInfo");
+                    final int gender = Integer.parseInt(jsonObject.getString("gender"));
+                    final String birthday = jsonObject.getString("birthday");
+                    final String nickname = jsonObject.getString("nickname");
+                    UiTools.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(gender == 0){
+                                rbMan.setChecked(true);
+                            }else {
+                                rbWomen.setChecked(true);
+                            }
+                            etNickname.setText(nickname);
+                            tvDate.setText(birthday);
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        PicassoUtils.loadImageWithHolder(Config.USER_PORTRAIT_URL+"?phoneNum="+phoneNum,R.drawable.ic_default,portrait);
     }
 
+
+    @OnClick(R.id.ll_change_birthday)
+    void changeBirthday(){
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "datePicker");
+    }
     // 修改生日
     public void changeBirthday(int year,int month,int day){
-        tv_date.setText(year + "." + month +"." +day);
+        tvDate.setText(year + "." + month +"." +day);
     }
 
 
 
 
 
-    // 从sharedPreferences中加载默认的信息
-    private void getDefaultInfo() {
-        Config.isMan = sharedPreferences.getBoolean(Config.STR_IS_MAN,true);
-        Config.nickName = sharedPreferences.getString(Config.STR_NICKNAME,"听说有昵称的孩子更帅哦~");
-        final Calendar c = Calendar.getInstance();
-        // 如果没有设置则使用当前的日期
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DATE);
-        final String birthday = year+"."+(month+1)+"."+day;
-        Config.birthday = sharedPreferences.getString(Config.STR_BIRTHDAY,birthday);
-        tv_date.setText(Config.birthday);
-        et_nickname.setText(Config.nickName);
-        if(Config.isMan){
-            rb_man.setChecked(true);
-        }else {
-            rb_women.setChecked(true);
-        }
-        // 为了防止程序崩溃，要在这种存在空指针异常的地方，进行空指针异常的检查
-        Config.PORTRAIT_PATH = sharedPreferences.getString(Config.STR_PORTRAIT_PATH,null);
-        if(Config.PORTRAIT_PATH != null){
-            Picasso.with(getApplicationContext()).load(new File(Config.PORTRAIT_PATH)).into(portrait);
-        }
+
+
+
+
+
+    @OnClick(R.id.ci_portrait)
+    void selectPortrait(){
+        Intent intent = new Intent(getApplicationContext(), ImageGridActivity.class);
+        startActivityForResult(intent, GET_PHOTO_STATE);
+
     }
-
-
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_save:
-                // 首先将信息提交到服务器，然后将信息保存至本地
-
-                saveLocal();
-                Toast.makeText(PersonalInfoActivity.this,"修改成功~",Toast.LENGTH_SHORT).show();
-             
-                OKClientManager.getOkManager().uploadImagineByURL(Config.UPLOAD_IMAGE_URL, Config.PORTRAIT_PATH, new OKClientManager.LoadJsonString() {
-                    @Override
-                    public void onResponse(String result) {
-                        if(result != null){
-                            Log.d(Config.DEBUG,result.toString());
-                        }
-                    }
-                });
-                // 向服务器提交数据
-                break;
-            case R.id.ci_portrait:
-                changePortrait();
-                break;
-            case R.id.ll_change_birthday:
-                DialogFragment newFragment = new DatePickerFragment();
-                newFragment.show(getSupportFragmentManager(), "datePicker");
-                break;
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == GET_PHOTO_STATE) {
+                ArrayList<ImageItem> photoInfo = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                imageItem = photoInfo.get(0);
+                Picasso.with(getApplicationContext()).load(new File(imageItem.path)).into(portrait);
+            } else {
+                Toast.makeText(getApplicationContext(), "没有数据", Toast.LENGTH_SHORT).show();
+            }
         }
     }
-    // 点击保存按钮之后才会修改生效
-    private void saveLocal() {
-        editor.putString(Config.STR_NICKNAME,et_nickname.getText().toString());
-        editor.putString(Config.STR_BIRTHDAY,tv_date.getText().toString());
-        editor.putString(Config.STR_PORTRAIT_PATH,Config.PORTRAIT_PATH);
-        editor.commit();
+    @OnClick(R.id.btn_save)
+    void SavePersonInfo(){
+        int gender = 0;
+        if(!isMan){
+            gender = 1;
+        }
+        String nickname = etNickname.getText().toString();
+        String birthday = tvDate.getText().toString();
+        Map<String,String> data = new HashMap<>();
+        data.put(Config.PHONE, phoneNum);
+        data.put(GENDER,gender+"");
+        data.put(NICKNAME, nickname);
+        data.put(BIRTHDAY,birthday);
+        Map<String,String> paths = new HashMap<>();
+        if(imageItem != null)
+            paths.put(phoneNum,imageItem.path);
+        okClientManager.postByMultipart(Config.CHANGE_PERSON_URI, data, paths, new OKClientManager.LoadJsonString() {
+             @Override
+             public void onResponse(String result) {
+                 try {
+                     JSONObject res = new JSONObject(result);
+                     switch (res.getInt(Config.CODE)){
+                         case 0:
+                             UiTools.runOnUiThread(new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     Toast.makeText(UiTools.getContext(),"修改成功",Toast.LENGTH_SHORT).show();
+                                 }
+                             });
+                             break;
+                         case 1:
+                             UiTools.runOnUiThread(new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     Toast.makeText(UiTools.getContext(),"修改失败",Toast.LENGTH_SHORT).show();
+                                 }
+                             });
+                             break;
+                     }
+                 } catch (JSONException e) {
+                     e.printStackTrace();
+                 }
+             }
+         });
     }
-    // 修改头像
-    private void changePortrait() {
-        final FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setEnableCamera(true)
-                .setEnableEdit(true)
-                .setEnableCrop(true)
-                .setCropSquare(true)
-                .setEnablePreview(true)
-                .setMutiSelectMaxSize(4)
-                .build();
-
-
-        ActionSheet.createBuilder(PersonalInfoActivity.this, getSupportFragmentManager())
-                .setCancelButtonTitle("取消")
-                .setOtherButtonTitles("打开相册", "拍照")
-                .setCancelableOnTouchOutside(true)
-                .setListener(new ActionSheet.ActionSheetListener() {
-                    @Override
-                    public void onDismiss(ActionSheet actionSheet, boolean isCancel) {
-
-                    }
-
-                    @Override
-                    public void onOtherButtonClick(ActionSheet actionSheet, int index) {
-                        switch (index) {
-                            case 0:
-                                GalleryFinal.openGallerySingle(REQUEST_CODE_GALLERY, functionConfig, mOnHandlerResultCallback);
-                                break;
-                            case 1:
-                                GalleryFinal.openCamera(REQUEST_CODE_CAMERA, functionConfig, mOnHandlerResultCallback);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                })
-                .show();
-        initImageLoader(this);
-    }
-    private void initImageLoader(Context context) {
-        ImageLoaderConfiguration.Builder config = new ImageLoaderConfiguration.Builder(context);
-        config.threadPriority(Thread.NORM_PRIORITY - 2);
-        config.denyCacheImageMultipleSizesInMemory();
-        config.diskCacheFileNameGenerator(new Md5FileNameGenerator());
-        config.diskCacheSize(50 * 1024 * 1024); // 50 MiB
-        config.tasksProcessingOrder(QueueProcessingType.LIFO);
-        config.writeDebugLogs(); // Remove for release app
-
-        // Initialize ImageLoader with configuration.
-        ImageLoader.getInstance().init(config.build());
-    }
-
 
 }

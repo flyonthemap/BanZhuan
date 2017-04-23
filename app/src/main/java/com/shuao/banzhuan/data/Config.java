@@ -11,18 +11,18 @@ public class Config {
     public static final String DEBUG = "result";
     public static final String CODE = "code"; // 返回json结果的key值
     // 宿舍BaseURL
-//    public static final String BASE_URL = "http://192.168.31.130:8080/banzhuan/";
-    public static final String BASE_URL = "http://192.168.1.126:8080/banzhuan/";
+//    public static final String BASE_URL = "http://192.168.31.130:8080/banzhuan";
+    public static final String BASE_URL = "http://192.168.2.2:8080/banzhuan";
 //  宾馆的BaseURL
-
     // 注册界面URL
     public static final String GET_CODE_URI = "user/authCode";
-    // 图书馆的URL
+
 //    public static final String BASE_URL = "http://10.177.102.210:8080/banzhuan/";
 
-//    public static final String BASE_URL = "http://192.168.43.137:8080/banzhuan";
-public static final String BASE_IMAGE_URL = BASE_URL+"image";
 //    public static final String BASE_URL = "http://192.168.2.2:8080/banzhuan/";
+    //    public static final String BASE_URL = "http://192.168.43.137:8080/banzhuan";
+    public static final String BASE_IMAGE_URL = BASE_URL+"/image";
+    public static final String USER_PORTRAIT_URL = BASE_URL+"/user/portrait";
 
     public static final String REGISTER_URI = "user/reg";
     // 注册界面提示码
@@ -36,9 +36,11 @@ public static final String BASE_IMAGE_URL = BASE_URL+"image";
     public static final String AUTH_CODE = "authCode"; // 验证码验证的表单参数
     public static final String PHONE = "phoneNum";
     public static final String CHECK_AUTH_CODE = "checkAuthCode";
-    public static final String USER_NAME = "nickname";
 
 
+
+    // 图书馆的URL
+    public static final String USER_PERSON_INFO_URI = "user/perInfo";
     //  登录相关参数配置
     public static final String LOGIN_URI = "user/login";
     public static final int LOGIN_SUCCESS = 2000;
@@ -57,8 +59,8 @@ public static final String BASE_IMAGE_URL = BASE_URL+"image";
     public static final String STR_SIZE = "size";
     public static final String STR_SCREEN = "screen";
     public static final String STR_DESCRIPTION = "des";
-    public static final String STR_NAME = "name";
 
+    public static final String STR_NAME = "name";
     public static final String STR_REWARD = "reward";
     public static final String USER_ID = "";
     public static final boolean IS_MAN = false;
@@ -66,15 +68,19 @@ public static final String BASE_IMAGE_URL = BASE_URL+"image";
     public static final String STR_NICKNAME = "nickname";
     public static final String STR_BIRTHDAY = "birthday";
     public static final String STR_PORTRAIT = "portrait" ;
+
+
     public static final String STR_PORTRAIT_PATH = "portraitpath";
-
-
     public static final String UPLOAD_IMAGE_URL = "http://172.16.1.118:7080/user/portrait";
     public static final String DOWNLOAD_PORTRAIT_URL = "http://172.16.1.118:7080/download/portrait?userID=c1e0c8773841409ebb9f";
     public static final String STR_INCOME = "income";
     public static final String HOME_URL = "http://172.16.1.118:7080/task/list?index=0" ;
     public static final int PER_PAGE_COUNT = 10;
-
+    public static final String TASK_URI = "task";
+    public static final int DOWNLOAD_SUCCESS = 0;
+    public static final String STATE = "state";
+    public static final String CHANGE_PWD_URI = "user/changePassword";
+    public static final String CHANGE_PERSON_URI = "user/changePerson";
 
 
     public static long income ;
@@ -139,5 +145,7 @@ public static final String BASE_IMAGE_URL = BASE_URL+"image";
     public static final String USER_REGISTER_URL = "http://172.16.1.118:7080/user/reg";
     public static final String DOWNLOAD_URL = "http://172.16.1.118:7080/download/";
     public static final int PAGE_AMOUNT = 10;
+
+    public static String phone ;
 
 }

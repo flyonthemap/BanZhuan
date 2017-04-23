@@ -11,7 +11,6 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-
         app:layout_scrollFlags="scroll|enterAlways">
 
     </android.support.v7.widget.Toolbar>
@@ -28,6 +27,7 @@
         <ScrollView
             android:id="@+id/scrollView"
             android:layout_width="match_parent"
+            android:scrollIndicators="none"
             android:layout_height="0dp"
             android:layout_weight="1">
 

@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,9 +39,11 @@ public class OKClientManager {
     // 上传JSON格式的数据
     private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json;charset=utf-8");
     // 指定提交正文的类型，否则无法获取post请求体中的内容
-    private static final MediaType MEDIA_TYPE_FORM = MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+    private static final MediaType MEDIA_TYPE_FORM = MediaType.parse("application/x-www-form-urlencoded;charset=utf-8");
     // 上传图片
     private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
+    private static final MediaType MEDIA_TYPE_MULTIPART = MediaType.parse("multipart/form-data;charset=utf-8");
+    private static final String PORTRAIT = "portrait";
     private OkHttpClient okHttpClient;
     private volatile static OKClientManager okManager;
     private OKClientManager(){
@@ -58,6 +61,48 @@ public class OKClientManager {
         }
         return okManager;
     }
+
+
+
+    /**
+     * get异步请求
+     *
+     * @param actionURI 请求的URI
+     * @param paramsMap 请求参数的map
+     * @param callback 回调接口
+     */
+    public  void requestGetBySyn(String actionURI, Map<String, String> paramsMap,final LoadJsonString callback) {
+        try {
+
+            //生成完成的请求地址
+            String params = getParamString(paramsMap);
+            String requestUrl = getRequestUrl(actionURI+"?"+params);
+            Log.d(Config.TAG,requestUrl);
+            //创建一个请求
+            final Request request = new Request.Builder().url(requestUrl).build();
+            // 异步get调用
+            ThreadManager.getThreadManager().createLongPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    okHttpClient.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            onSuccessJsonString(response.body().string(),callback);
+                        }
+                    });
+
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e(Config.TAG, e.toString());
+        }
+    }
     /**
      * post异步请求
      *
@@ -67,21 +112,10 @@ public class OKClientManager {
      */
     public  void requestPostBySyn(String actionUri, Map<String, String> paramsMap,final LoadJsonString callback) {
         try {
-            //处理参数
-            StringBuilder tempParams = new StringBuilder();
-            int pos = 0;
-            for (String key : paramsMap.keySet()) {
-                if (pos > 0) {
-                    tempParams.append("&");
-                }
-                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
-                pos++;
-            }
-            //生成完成的请求地址
-            String requestUrl = String.format("%s/%s", BASE_URL, actionUri);
+            String params = getParamString(paramsMap);
+            String requestUrl = getRequestUrl(actionUri);
             Log.d(Config.TAG,requestUrl);
             //生成参数
-            String params = tempParams.toString();
             Log.d(Config.TAG,params);
             //创建一个请求实体对象 RequestBody
             RequestBody body = RequestBody.create(MEDIA_TYPE_FORM, params);
@@ -110,107 +144,29 @@ public class OKClientManager {
             Log.e(Config.TAG, e.toString());
         }
     }
-    /**
-     * get异步请求
-     *
-     * @param actionURI 请求的URI
-     * @param paramsMap 请求参数的map
-     * @param callback 回调接口
-     */
-    public  void requestGetBySyn(String actionURI, Map<String, String> paramsMap,final LoadJsonString callback) {
-        try {
-            //处理参数
-            StringBuilder tempParams = new StringBuilder();
-            int pos = 0;
-            for (String key : paramsMap.keySet()) {
-                if (pos > 0) {
-                    tempParams.append("&");
-                }
-                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
-                pos++;
-            }
-            //生成完成的请求地址
-            String params = tempParams.toString();
-            String requestUrl = String.format("%s/%s", BASE_URL, actionURI+"?"+params);
-            Log.d(Config.TAG,requestUrl);
-            //创建一个请求
-            final Request request = new Request.Builder().url(requestUrl).build();
-            // 异步get调用
-            ThreadManager.getThreadManager().createLongPool().execute(new Runnable() {
-                @Override
-                public void run() {
-                    okHttpClient.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
 
-                        }
 
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            onSuccessJsonString(response.body().string(),callback);
-                        }
-                    });
-
-                }
-            });
-
-        } catch (Exception e) {
-            Log.e(Config.TAG, e.toString());
-        }
-    }
-    // 上传Json格式的字符串
-    public void postJsonString(final String url, final String postBody,final LoadJsonObject callback){
+    // 进行多段式表单提交
+    public void postByMultipart(String actionURI, final Map<String,String> paramsMap,final Map<String,String> paths, final LoadJsonString callback){
+        final String requestUrl = getRequestUrl(actionURI);
         ThreadManager.getThreadManager().createLongPool().execute(new Runnable() {
             @Override
             public void run() {
-                Request request = new Request.Builder()
-                        .url(url)
-                        .post(RequestBody.create(MEDIA_TYPE_JSON , postBody))
-                        .build();
-
-                try {
-                    okHttpClient.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            // 此处回调在服务器
-                            onSuccessJsonObject(response.body().string(),callback);
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
+                MultipartBody.Builder builder =  new MultipartBody.Builder().setType(MultipartBody.FORM);
+                Log.e(Config.TAG,requestUrl);
+                if(paths.size() != 0){
+                    for (String path : paths.keySet()) {
+                        builder.addFormDataPart(PORTRAIT, path, RequestBody.create(MEDIA_TYPE_PNG, new File(paths.get(path))));
+                    }
                 }
-
-
-            }
-        });
-    }
-
-    /*
-    * 提交复杂的表单数据给服务器，这里主要用来上传图片和头像
-    * url 上传的地址
-    * params 上传的表单字段
-    * fileName 要上传的本地文件名
-    * loadJsonString 返回的json结果
-    * */
-    public void uploadImagineByURL(final String url, final String fileName, final LoadJsonString callback){
-        ThreadManager.getThreadManager().createLongPool().execute(new Runnable() {
-            @Override
-            public void run() {
-//                这里用的是多段式提交
-                RequestBody requestBody = new MultipartBody.Builder()
-
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("userId", "c1e0c8773841409ebb9f")
-                        .addFormDataPart("portrait", "logo-square.jpg",
-                                RequestBody.create(MEDIA_TYPE_PNG, new File(fileName)))
-                        .build();
+                if(paramsMap.size() != 0){
+                    for (String key : paramsMap.keySet()) {
+                        builder.addFormDataPart(key, paramsMap.get(key));
+                    }
+                }
+                RequestBody requestBody = builder.build();
                 Request request = new Request.Builder()
-                        .url(url)
+                        .url(requestUrl)
                         .post(requestBody)
                         .build();
                 okHttpClient.newCall(request).enqueue(new Callback() {
@@ -404,7 +360,25 @@ public class OKClientManager {
 
     }
 
-
+    private String getParamString(Map<String,String> paramsMap){
+        StringBuilder tempParams = new StringBuilder();
+        int pos = 0;
+        for (String key : paramsMap.keySet()) {
+            if (pos > 0) {
+                tempParams.append("&");
+            }
+            try {
+                tempParams.append(String.format("%s=%s", key, URLEncoder.encode(paramsMap.get(key), "utf-8")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            pos++;
+        }
+        return tempParams.toString();
+    }
+    private String getRequestUrl(String actionUri) {
+        return String.format("%s/%s", BASE_URL, actionUri);
+    }
     public interface LoadJsonString{
         void onResponse(String result);
     }

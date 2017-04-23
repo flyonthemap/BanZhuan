@@ -43,7 +43,7 @@ public abstract class  BaseProtocol<T> {
     private String loadServer(int index) {
         // 当服务的URL不需要index的值得时候，会自动过滤掉
 //        String url = Config.BASE_URL+"/task/list"+"?index="+index;
-        String url = Config.BASE_URL+ getKey()
+        String url = Config.BASE_URL+ "/"+getKey()
                 + "?index=" + index + getParams();
 //        HttpHelper.HttpResult httpResult = HttpHelper.get(HttpHelper.URL + getKey()
 //                + "?index=" + index + getParams());

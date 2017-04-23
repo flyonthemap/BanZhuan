@@ -36,9 +36,9 @@
     <string name="getCaptcha_too_many">今日发送次数超出限制</string>
     <string name="getCaptcha_frequently">你获取验证码过于频繁，先喝杯茶吧！</string>
     <string name="username">&#160;&#160;&#160;用户名：</string>
-    <string name="null_account">帐号不能为空</string>
-    <string name="short_account">帐号不能低于3个字</string>
-    <string name="error_account">帐号格式不正确</string>
+    <string name="null_account">用户名不能为空</string>
+    <string name="short_account">用户名不能低于3个字</string>
+    <string name="error_account">用户名格式不正确</string>
     <string name="password">登录密码:</string>
     <string name="same_password">登录密码与交易密码不能相同</string>
     <string name="null_password">密码不能为空</string>
@@ -98,6 +98,7 @@
     <string name="phone_has_no_register">手机号已未注册</string>
     <string name="login_success">登录成功！</string>
     <!--注册界面-->
+    <string name="please_upload_portrait">请上传头像</string>
     <string name="nickname">请输入昵称</string>
     <string name="pass_word_prompt">6-10位推荐组合型密码</string>
     <string name="transaction_password">确认密码：</string>
@@ -119,6 +120,14 @@
     <string name="register_fail_please_try_later">注册失败请稍后重试</string>
     <string name="password_is_distinct">两次输入的密码不一致</string>
     <string name="login_fail">登录失败</string>
+    <string name="remaining_time">剩余时间%1$ds</string>
     <!--提现界面-->
     <string name="withdraw">提现</string>
+
+    <!--主界面-->
+    <string name="cur_integral">%1$s元</string>
+    <string name="old_password">原密码：</string>
+    <string name="new_password">修改后的密码：</string>
+    <string name="has_got_cash">已提现：</string>
+    <string name="will_have_got_brokerage">未提现：</string>
 </resources>

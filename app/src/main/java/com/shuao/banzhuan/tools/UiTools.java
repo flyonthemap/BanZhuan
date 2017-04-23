@@ -8,10 +8,12 @@ package com.shuao.banzhuan.tools;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 
 public class UiTools
@@ -59,9 +61,13 @@ public class UiTools
         }
         return false;
     }
-    @TargetApi(Build.VERSION_CODES.M)
     public static int getColor(int id) {
-        return getContext().getResources().getColor(id,null);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+            return getContext().getResources().getColor(id, null);
+        }else{
+            return getContext().getResources().getColor(id);
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -91,6 +97,35 @@ public class UiTools
     public static void cancel(Runnable auToRunTask) {
         BaseApplication.getMainHandler().removeCallbacks(auToRunTask);
     }
-
+    /**
+     *  1、获取main在窗体的可视区域
+     *  2、获取main在窗体的不可视区域高度
+     *  3、判断不可视区域高度
+     *      1、大于100：键盘显示  获取Scroll的窗体坐标
+     *                           算出main需要滚动的高度，使scroll显示。
+     *      2、小于100：键盘隐藏
+     *
+     * @param main 根布局
+     * @param scroll 需要显示的最下方View
+     */
+    public static void addLayoutListener(final View main, final View scroll) {
+        main.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect rect = new Rect();
+                main.getWindowVisibleDisplayFrame(rect);
+                // 获取不可使区域的高度
+                int mainInvisibleHeight = main.getRootView().getHeight() - rect.bottom;
+                if (mainInvisibleHeight > 100) {
+                    int[] location = new int[2];
+                    scroll.getLocationInWindow(location);
+                    int scrollHeight = (location[1] + scroll.getHeight()) - rect.bottom;
+                    main.scrollTo(0, scrollHeight);
+                } else {
+                    main.scrollTo(0, 0);
+                }
+            }
+        });
+    }
 }
 

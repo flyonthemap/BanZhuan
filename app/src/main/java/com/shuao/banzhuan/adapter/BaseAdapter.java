@@ -15,10 +15,7 @@ import java.util.List;
 
 public abstract class BaseAdapter<Data> extends RecyclerView.Adapter  {
 
-    protected Context mContext;
-    protected LayoutInflater inflater;
     protected List<Data> mData = new ArrayList<>();
-    OnRecyclerViewItemClickListener listener;
     public void updateData(List mData) {
         this.mData.clear();
         appendData(mData);
@@ -39,10 +36,7 @@ public abstract class BaseAdapter<Data> extends RecyclerView.Adapter  {
     public int getItemCount() {
         return mData.size();
     }
-    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener)
-    {
-        this.listener = listener;
-    }
+
 
 
 }

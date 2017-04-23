@@ -66,4 +66,10 @@
         <item name="android:minHeight">50dip</item>
         <item name="android:maxHeight">50dip</item>
     </style>
+    <style name="screen_margin_style">
+        <item name="android:layout_marginRight">@dimen/pad3</item>
+        <item name="android:layout_marginTop">@dimen/pad3</item>
+        <item name="android:layout_marginLeft">@dimen/pad3</item>
+    </style>
+
 </resources>

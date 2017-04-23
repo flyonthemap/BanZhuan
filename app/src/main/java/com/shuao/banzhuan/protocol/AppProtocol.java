@@ -19,39 +19,25 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class AppProtocol extends BaseProtocol<List<AppInfo>>{
     private List<String> pictures;
+    private static List<AppInfo> appInfoList;
     @Override
     public List<AppInfo> parseJson(String json) {
         Log.d(Config.DEBUG,"parse json in AppProtocol...");
-//        Log.d(Config.DEBUG,json);
-        List<AppInfo> appInfoList=new ArrayList<AppInfo>();
-//        pictures=new ArrayList<String>();
+         appInfoList=new ArrayList<AppInfo>();
         try {
             JSONObject jsonObject=new JSONObject(json);
-//            JSONArray jsonArray2 = jsonObject.getJSONArray("picture");
-//            for(int i=0;i<jsonArray2.length();i++){
-//                String str=jsonArray2.getString(i);
-//                pictures.add(str);
-//            }
-
-
-
-
             JSONArray jsonArray = jsonObject.getJSONArray("task");
-//            Log.d(Config.DEBUG,jsonArray.toString());
             for(int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObj = jsonArray.getJSONObject(i);
                 AppInfo info=new AppInfo();
-//                Log.d(Config.TAG,"appID="+jsonObj.getString("id"));
                 info.setAppId(jsonObj.getString("id"));
                 info.setBonus(jsonObj.getInt("reward"));
                 info.setName(jsonObj.getString("name"));
                 info.setPackageName(jsonObj.getString("packageName"));
                 info.setIconUrl(jsonObj.getString("iconUrl"));
                 info.setDownloadUrl(jsonObj.getString("downloadUrl"));
-//                info.setTaskType(jsonObj.getString("type"));
                 info.setSize(jsonObj.getLong("size"));
                 info.setDescription(jsonObj.getString("des"));
-////                info.setTaskId(jsonObj.getString("taskID"));
                 appInfoList.add(info);
 
             }
@@ -63,11 +49,9 @@ public class AppProtocol extends BaseProtocol<List<AppInfo>>{
         }
     }
 
-
     public List<String> getPictures() {
         return pictures;
     }
-
 
 
     @Override

@@ -164,13 +164,5 @@ public class DetailActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tl_detail);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
-    }
+
 }

@@ -10,14 +10,18 @@
     <application
         android:name=".tools.BaseApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/banzhuan"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyDesign">
         <!--欢迎界面-->
         <activity android:name=".activity.WelcomeActivity">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!--注册界面-->
         <activity android:name=".activity.RegisterActivity"
@@ -34,11 +38,7 @@
         <activity
             android:launchMode="singleTask"
             android:name=".activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!--登录界面-->
         <activity
@@ -73,10 +73,12 @@
         </activity>
         <!--设置-->
         <activity android:name=".activity.SettingActivity"
+            android:label="设置"
             android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity"/>
+
 
         </activity>
         <!--我要兑换-->
@@ -91,6 +93,7 @@
         </activity>
         <!--任务记录-->
         <activity android:name=".activity.TaskRecordActivity"
+            android:label="任务记录"
             android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -99,6 +102,7 @@
         </activity>
         <!--我的任务-->
         <activity android:name=".activity.TaskActivity"
+            android:label="我的任务"
             android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -118,6 +122,32 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity"/>
+        </activity>
+        <activity
+            android:name=".activity.ChangePwdActivity"
+            android:label="修改密码"
+            android:parentActivityName=".activity.SettingActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity"/>
+        </activity>
+        <receiver android:name=".receiver.AppMonitorReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <activity
+            android:name=".activity.ExchangeDetailActivity"
+            android:label="兑换现金"
+            android:parentActivityName=".activity.ExchangeActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity"/>
+
         </activity>
     </application>
 

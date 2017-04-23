@@ -28,7 +28,6 @@ import java.util.List;
 * */
 public class AppFragment extends BaseFragment {
     private List<AppInfo> data;
-    private List<String> pictures; //  轮播条目需要展示的数据
     private RecyclerView recyclerView;
     // App加载协议
     private final AppProtocol appProtocol = new AppProtocol();
@@ -45,23 +44,17 @@ public class AppFragment extends BaseFragment {
     @Override
     public View createSuccessView() {
         if(recyclerView != null){
-            Log.d(Config.DEBUG,"--->result!=null");
             // 移除之前的ListView
             ViewUtils.removeFromParent(recyclerView);
         }
         recyclerView = new RecyclerView(getActivity());
-        ViewPagerHolder holder=new ViewPagerHolder();
-        pictures = new ArrayList<>();
-        pictures.add("haha");
-        pictures.add("haha");
-        if(pictures != null){
-            holder.setData(pictures);
-        }
+
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         // 设置APPAdapter
         final AppAdapter appAdapter = new AppAdapter(getActivity());
         appAdapter.appendData(data);
         LoadMoreAdapterWrapper baseAdapter = new LoadMoreAdapterWrapper(appAdapter);
+
         baseAdapter.setOnLoad(new OnLoad() {
             @Override
             public void load(final ILoadCallback callback) {
@@ -99,12 +92,12 @@ public class AppFragment extends BaseFragment {
 
     @Override
     protected LoadingPage.LoadResult load() {
-//        Log.d(Config.DEBUG,"AppFragment load...");
-        AppProtocol protocol=new AppProtocol();
-        data = protocol.load(0);  // load index 从哪个位置开始获取数据   0  20  40 60
+        data = appProtocol.load(0);  // load index 从哪个位置开始获取数据   0  20  40 60
 //        pictures = protocol.getPictures();
         return getResultByResponse(data);
+
     }
+
 
 
 }

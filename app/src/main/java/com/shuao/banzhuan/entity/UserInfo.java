@@ -21,7 +21,8 @@ public class UserInfo implements Bean, Serializable {
      *
      */
     private static final long serialVersionUID = 1L;
-    private String userName;// 用户名
+    private String nickname;// 用户名
+
     private String picture; // 下载图路径
     private String phone;// 手机电话
     private int userFlag;// 用户身份 0 借款 1投资 2其它
@@ -37,7 +38,7 @@ public class UserInfo implements Bean, Serializable {
 
     public UserInfo(String userName, String picture, String phone, int userFlag, int deputyFlag, int messageCount, double availBal, long qrCode) {
         super();
-        this.userName = userName;
+        this.nickname = nickname;
         this.picture = picture;
         this.phone = phone;
         this.userFlag = userFlag;
@@ -47,12 +48,12 @@ public class UserInfo implements Bean, Serializable {
         this.qrCode = qrCode;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     public String getPicture() {

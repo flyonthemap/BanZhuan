@@ -5,7 +5,7 @@
     android:fitsSystemWindows="true">
 
     <RelativeLayout
-        android:id="@+id/login_layout"
+        android:id="@+id/main_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="32dp"
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:gravity="center" >
             <EditText
-                android:id="@+id/username"
+                android:id="@+id/et_username"
                 android:layout_width="match_parent"
                 android:background="@drawable/edit_shape"
                 android:layout_height="@dimen/default_edit_text_height"
@@ -42,7 +42,7 @@
                 android:layout_marginLeft="8dp" />
 
             <Button
-                android:id="@+id/bt_username_clear"
+                android:id="@+id/btn_username_clear"
                 android:layout_width="23dp"
                 android:layout_height="23dp"
                 android:background="@drawable/bt_clear"
@@ -70,7 +70,7 @@
             android:layout_marginTop="6dp"
             android:gravity="center" >
             <EditText
-                android:id="@+id/password"
+                android:id="@+id/et_password"
                 android:background="@drawable/edit_shape"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/default_edit_text_height"
@@ -83,7 +83,7 @@
             </EditText>
 
             <Button
-                android:id="@+id/bt_pwd_eye"
+                android:id="@+id/btn_pwd_eye"
                 android:layout_width="23dp"
                 android:layout_height="23dp"
                 android:background="@drawable/eye_close"
@@ -92,7 +92,7 @@
                 />
 
             <Button
-                android:id="@+id/bt_pwd_clear"
+                android:id="@+id/btn_pwd_clear"
                 android:layout_width="23dp"
                 android:layout_height="23dp"
                 android:background="@drawable/btn_clear"
@@ -112,7 +112,7 @@
         </FrameLayout>
 
         <Button
-            android:id="@+id/login"
+            android:id="@+id/btn_login"
             android:layout_width="fill_parent"
             android:layout_height="@dimen/default_button_height"
             android:layout_below="@id/usercode_layout"
@@ -122,20 +122,20 @@
             android:gravity="center"
             android:text="@string/login" />
         <Button
-            android:id="@+id/login_error"
+            android:id="@+id/btn_forget_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignRight="@id/login"
-            android:layout_below="@id/login"
+            android:layout_alignRight="@id/btn_login"
+            android:layout_below="@id/btn_login"
             android:background="#00000000"
             android:text="@string/forget_password"
             android:textSize="16sp" />
         <Button
-            android:id="@+id/register"
+            android:id="@+id/btn_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/login"
-            android:layout_below="@id/login"
+            android:layout_alignLeft="@id/btn_login"
+            android:layout_below="@id/btn_login"
             android:background="#00000000"
             android:gravity="left|center_vertical"
             android:text="@string/register"

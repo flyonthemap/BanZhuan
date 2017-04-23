@@ -16,7 +16,7 @@ public class FragmentFactory {
 //        BaseFragment fragment = null;
         if (fragment == null) {
 
-            switch (position){
+            switch (position%2){
                 case 0:
                     fragment = new AppFragment();
                     break;
